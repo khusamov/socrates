@@ -1,0 +1,23 @@
+{
+	
+	"compilerOptions": {
+		"locale": "ru",
+	    "baseUrl": ".",
+	    "outDir": "./dist",
+	    "module": "commonjs",
+	    "target": "es6",
+	    "declaration": true,
+	    "typeRoots": ["node_modules/@types"],
+	    "removeComments": false,
+	    "experimentalDecorators": true,
+	    "emitDecoratorMetadata": true,
+	    "lib": ["es2017"],
+	
+	    "sourceRoot": ".",
+	    "sourceMap": true,
+	    "inlineSourceMap": false,
+	    "inlineSources": false
+	}
+	
+	
+}
