@@ -10,10 +10,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const sqlite = require("sqlite");
 const PORT = 8081;
 (() => __awaiter(this, void 0, void 0, function* () {
+    app.use(cors());
     app.use(express.json());
     app.use(express.urlencoded());
     const db = yield sqlite.open(path.join(__dirname, '../../db/mscc.db'));

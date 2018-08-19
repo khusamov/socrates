@@ -1,6 +1,6 @@
 import * as React from 'react';
 import './App.css';
-import ProductGroup from '../components/productGroup/ProductGroup';
+import ProductGroup from '../../components/productGroup/ProductGroup';
 
 import logo from './logo.svg';
 
