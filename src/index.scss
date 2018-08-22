@@ -1,0 +1,41 @@
+$font-family: sans-serif;
+$font-family-for-headers: sans-serif;
+
+html {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	font-family: $font-family;
+	body {
+		margin: 0;
+		padding: 0;
+		flex: 1 1 0;
+		display: flex;
+		h1, h2, h3, h4, h5, h6 {
+			font-family: $font-family-for-headers;
+		}
+		#root {
+			flex: 1 1 0;
+			display: flex;
+		}
+		/**
+		 * Убрать кнопки изменения числовых данных в полях ввода (spin-стрелки).
+		 * @link https://goo.gl/ZYufnM
+		 */
+		input::-webkit-outer-spin-button,
+		input::-webkit-inner-spin-button {
+			// display: none; // Crashes Chrome on hover.
+			-webkit-appearance: none;
+			margin: 0; // Apparently some margin are still there even though it's hidden.
+		}
+		/**
+		 * Исправление ошибки библиотеки any-resize-event.
+		 * Разработчики похоже забыли убрать рамку с фреймов.
+		 */
+		iframe {
+			border: 0;
+		}
+	}
+}

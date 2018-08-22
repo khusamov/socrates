@@ -11,7 +11,7 @@ const PORT = 8081;
 
 	app.use(cors());
 	app.use(express.json());
-	app.use(express.urlencoded());
+	app.use(express.urlencoded({extended: true}));
 
 	const db = await sqlite.open(path.join(__dirname, '../../db/mscc.db'));
 
@@ -34,14 +34,14 @@ const PORT = 8081;
 	});
 
 	app.delete('/ProductGroupList/:id', async (req: Request, res: Response) => {
-		await db.exec(`delete ProductGroup where ID = ${req.params.id}`);
+		await db.exec(`delete from ProductGroup where ID = ${req.params.id}`);
 		res.json({
 			success: true
 		});
 	});
 
 	app.listen(PORT, () => {
-		console.log(`Example app listening on port ${PORT}!`);
+		console.log(`Application listening on port ${PORT}!`);
 	});
 
 })();

@@ -17,7 +17,7 @@ const PORT = 8081;
 (() => __awaiter(this, void 0, void 0, function* () {
     app.use(cors());
     app.use(express.json());
-    app.use(express.urlencoded());
+    app.use(express.urlencoded({ extended: true }));
     const db = yield sqlite.open(path.join(__dirname, '../../db/mscc.db'));
     app.get('/ProductGroupList', (req, res) => __awaiter(this, void 0, void 0, function* () {
         res.json(yield db.all(`select * from ProductGroup`));
@@ -35,13 +35,13 @@ const PORT = 8081;
         });
     }));
     app.delete('/ProductGroupList/:id', (req, res) => __awaiter(this, void 0, void 0, function* () {
-        yield db.exec(`delete ProductGroup where ID = ${req.params.id}`);
+        yield db.exec(`delete from ProductGroup where ID = ${req.params.id}`);
         res.json({
             success: true
         });
     }));
     app.listen(PORT, () => {
-        console.log(`Example app listening on port ${PORT}!`);
+        console.log(`Application listening on port ${PORT}!`);
     });
 }))();
 //# sourceMappingURL=index.js.map

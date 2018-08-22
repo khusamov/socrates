@@ -1,6 +1,7 @@
-import React, {MouseEvent} from 'react';
+import React, {MouseEvent, RefObject} from 'react';
 import Modal from '../modal/Modal';
 import ProductGroupForm from './ProductGroupForm';
+import './ProductGroupList.css';
 
 const {
 	REACT_APP_API_HOST: API_HOST,
@@ -31,6 +32,14 @@ export default class ProductGroupList extends React.Component<{}, IProductGroupS
 		productGroupList: [],
 		modalVisible: false
 	};
+
+	private readonly productGroupFormRef: RefObject<ProductGroupForm>;
+
+	constructor(props: {}) {
+		super(props);
+		this.productGroupFormRef = React.createRef();
+	}
+
 	public async componentDidMount() {
 		await this.loadProductGroupList();
 	}
@@ -39,15 +48,36 @@ export default class ProductGroupList extends React.Component<{}, IProductGroupS
 			<div className='ProductGroupList'>
 				<button onClick={this.onInsertButtonClick}>Новая запись</button>
 				{
-					this.state.productGroupList.map(
-						(productGroupItem, index) => (
-							<div key={index}>{productGroupItem.Name}</div>
-						)
+					!!this.state.productGroupList.length && (
+						<table>
+							<thead>
+								<tr>
+									<th>Наименование группы товаров/услуг</th>
+									<th/>
+								</tr>
+							</thead>
+							<tbody>
+							{
+								this.state.productGroupList.map(
+									(productGroupItem, index) => (
+										<tr key={index}>
+											<td>{productGroupItem.Name}</td>
+											<td>
+												<a href='#' data-id={productGroupItem.ID} onClick={this.onUpdateButtonClick}>Изменить</a>
+												<span>&nbsp;</span>
+												<a href='#' data-id={productGroupItem.ID} onClick={this.onDeleteButtonClick}>Удалить</a>
+											</td>
+										</tr>
+									)
+								)
+							}
+							</tbody>
+						</table>
 					)
 				}
 				<Modal visible={this.state.modalVisible}>
 					<div style={{padding: 20}}>
-						<ProductGroupForm />
+						<ProductGroupForm ref={this.productGroupFormRef}/>
 						<button onClick={this.onSubmitButtonClick}>Создать</button>
 						<button onClick={this.onCancelButtonClick}>Закрыть</button>
 					</div>
@@ -76,9 +106,36 @@ export default class ProductGroupList extends React.Component<{}, IProductGroupS
 			modalVisible: false
 		});
 	};
-	private onSubmitButtonClick = (event: MouseEvent) => {
+	private onSubmitButtonClick = async (event: MouseEvent) => {
 		this.setState({
 			modalVisible: false
 		});
+		if (this.productGroupFormRef.current) {
+			const response = await fetch(ProductGroupList.getApiUrl('ProductGroupList'), {
+				method: 'post',
+				headers: {
+					'Content-Type': 'application/json; charset=utf-8'
+				},
+				body: JSON.stringify({
+					Name: this.productGroupFormRef.current.state.value.Name
+				})
+			});
+			const data = await response.json();
+			console.log(data);
+			await this.loadProductGroupList();
+		}
+	};
+	private onUpdateButtonClick = async (event: MouseEvent<HTMLAnchorElement>) => {
+		// const id = (event.target as HTMLAnchorElement).getAttribute('data-id');
+
+	};
+	private onDeleteButtonClick = async (event: MouseEvent<HTMLAnchorElement>) => {
+		const id = (event.target as HTMLAnchorElement).getAttribute('data-id');
+		const response = await fetch(ProductGroupList.getApiUrl(`ProductGroupList/${id}`), {
+			method: 'delete'
+		});
+		const data = await response.json();
+		console.log(data);
+		await this.loadProductGroupList();
 	};
 }
