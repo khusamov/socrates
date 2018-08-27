@@ -19,22 +19,28 @@ const PORT = 8081;
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     const db = yield sqlite.open(path.join(__dirname, '../../db/mscc.db'));
-    app.get('/ProductGroupList', (req, res) => __awaiter(this, void 0, void 0, function* () {
-        res.json(yield db.all(`select * from ProductGroup`));
+    app.get('/ProductGroup/:id?', (req, res) => __awaiter(this, void 0, void 0, function* () {
+        if (req.params.id) {
+            const data = yield db.all(`select * from ProductGroup where ID = ${req.params.id}`);
+            res.json(data[0]);
+        }
+        else {
+            res.json(yield db.all(`select * from ProductGroup`));
+        }
     }));
-    app.post('/ProductGroupList', (req, res) => __awaiter(this, void 0, void 0, function* () {
+    app.post('/ProductGroup', (req, res) => __awaiter(this, void 0, void 0, function* () {
         yield db.exec(`insert into ProductGroup (Name) values ('${req.body.Name}')`);
         res.json({
             success: true
         });
     }));
-    app.put('/ProductGroupList/:id', (req, res) => __awaiter(this, void 0, void 0, function* () {
+    app.put('/ProductGroup/:id', (req, res) => __awaiter(this, void 0, void 0, function* () {
         yield db.exec(`update ProductGroup set Name = '${req.body.Name}' where ID = ${req.params.id}`);
         res.json({
             success: true
         });
     }));
-    app.delete('/ProductGroupList/:id', (req, res) => __awaiter(this, void 0, void 0, function* () {
+    app.delete('/ProductGroup/:id', (req, res) => __awaiter(this, void 0, void 0, function* () {
         yield db.exec(`delete from ProductGroup where ID = ${req.params.id}`);
         res.json({
             success: true

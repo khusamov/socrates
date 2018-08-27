@@ -15,25 +15,30 @@ const PORT = 8081;
 
 	const db = await sqlite.open(path.join(__dirname, '../../db/mscc.db'));
 
-	app.get('/ProductGroupList', async (req: Request, res: Response) => {
-		res.json(await db.all(`select * from ProductGroup`));
+	app.get('/ProductGroup/:id?', async (req: Request, res: Response) => {
+		if (req.params.id) {
+			const data = await db.all(`select * from ProductGroup where ID = ${req.params.id}`);
+			res.json(data[0]);
+		} else {
+			res.json(await db.all(`select * from ProductGroup`));
+		}
 	});
 
-	app.post('/ProductGroupList', async (req: Request, res: Response) => {
+	app.post('/ProductGroup', async (req: Request, res: Response) => {
 		await db.exec(`insert into ProductGroup (Name) values ('${req.body.Name}')`);
 		res.json({
 			success: true
 		});
 	});
 
-	app.put('/ProductGroupList/:id', async (req: Request, res: Response) => {
+	app.put('/ProductGroup/:id', async (req: Request, res: Response) => {
 		await db.exec(`update ProductGroup set Name = '${req.body.Name}' where ID = ${req.params.id}`);
 		res.json({
 			success: true
 		});
 	});
 
-	app.delete('/ProductGroupList/:id', async (req: Request, res: Response) => {
+	app.delete('/ProductGroup/:id', async (req: Request, res: Response) => {
 		await db.exec(`delete from ProductGroup where ID = ${req.params.id}`);
 		res.json({
 			success: true

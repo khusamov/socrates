@@ -18,7 +18,6 @@
   display: flex;
   flex-direction: column;
   align-items: center; }
-
-.Modal .window {
-  width: 300px;
-  background-color: white; }
+  .Modal .window {
+    width: 300px;
+    background-color: white; }
