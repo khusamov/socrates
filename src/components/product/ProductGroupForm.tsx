@@ -24,7 +24,7 @@ export default class ProductGroupForm extends Component<IProductGroupFormProps, 
 		if (this.props.data) {
 			this.setState({
 				data: {
-					Name: this.props.data.Name
+					Name: this.props.data.Name || ''
 				}
 			});
 		}
