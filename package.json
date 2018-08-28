@@ -17,7 +17,11 @@
     "nodemon": "nodemon server/dist"
   },
   "dependencies": {
+    "@koa/cors": "^2.2.2",
     "cors": "^2.8.4",
+    "koa": "^2.5.2",
+    "koa-body": "^4.0.4",
+    "koa-router": "^7.4.0",
     "path": "^0.12.7",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
@@ -28,6 +32,9 @@
   "devDependencies": {
     "@types/express": "^4.16.0",
     "@types/jest": "^23.3.1",
+    "@types/koa": "^2.0.46",
+    "@types/koa-router": "^7.0.31",
+    "@types/koa__cors": "^2.2.3",
     "@types/node": "^10.7.1",
     "@types/react": "^16.4.11",
     "@types/react-dom": "^16.0.7",

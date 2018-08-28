@@ -123,8 +123,7 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 					Name: this.productGroupFormRef.current.state.data.Name
 				})
 			});
-			const data = await response.json();
-			console.log(data);
+			console.log(response);
 			await this.loadProductGroupList();
 		}
 	};
@@ -149,8 +148,7 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 		const response = await fetch(ProductGroupList.getApiUrl(`ProductGroup/${id}`), {
 			method: 'delete'
 		});
-		const data = await response.json();
-		console.log(data);
+		console.log(response);
 		await this.loadProductGroupList();
 	};
 }

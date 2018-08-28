@@ -7,47 +7,60 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const path = require("path");
-const cors = require("cors");
-const express = require("express");
-const sqlite = require("sqlite");
-const app = express();
+const path_1 = __importDefault(require("path"));
+const cors_1 = __importDefault(require("@koa/cors"));
+const sqlite_1 = __importDefault(require("sqlite"));
+const koa_1 = __importDefault(require("koa"));
+const koa_router_1 = __importDefault(require("koa-router"));
+const koa_body_1 = __importDefault(require("koa-body"));
 const PORT = 8081;
+const app = new koa_1.default();
 (() => __awaiter(this, void 0, void 0, function* () {
-    app.use(cors());
-    app.use(express.json());
-    app.use(express.urlencoded({ extended: true }));
-    const db = yield sqlite.open(path.join(__dirname, '../../db/mscc.db'));
-    app.get('/ProductGroup/:id?', (req, res) => __awaiter(this, void 0, void 0, function* () {
-        if (req.params.id) {
-            const data = yield db.all(`select * from ProductGroup where ID = ${req.params.id}`);
-            res.json(data[0]);
+    const db = yield sqlite_1.default.open(path_1.default.join(__dirname, '../../db/mscc.db'));
+    app.use(cors_1.default());
+    const productGroupRouter = new koa_router_1.default();
+    productGroupRouter.get('/ProductGroup/:id?', (ctx) => __awaiter(this, void 0, void 0, function* () {
+        if (ctx.params.id) {
+            const data = yield db.all(`select * from ProductGroup where ID = ${ctx.params.id}`);
+            const record = data[0];
+            if (record) {
+                ctx.body = record;
+            }
+            else {
+                ctx.body = {};
+                ctx.status = 204;
+            }
         }
         else {
-            res.json(yield db.all(`select * from ProductGroup`));
+            const data = yield db.all(`select * from ProductGroup`);
+            if (data.length) {
+                ctx.body = data;
+            }
+            else {
+                ctx.body = [];
+                ctx.status = 204;
+            }
         }
     }));
-    app.post('/ProductGroup', (req, res) => __awaiter(this, void 0, void 0, function* () {
-        yield db.exec(`insert into ProductGroup (Name) values ('${req.body.Name}')`);
-        res.json({
-            success: true
-        });
+    productGroupRouter.post('/ProductGroup', koa_body_1.default(), (ctx) => __awaiter(this, void 0, void 0, function* () {
+        yield db.exec(`insert into ProductGroup (Name) values ('${ctx.request.body.Name}')`);
+        ctx.status = 201;
     }));
-    app.put('/ProductGroup/:id', (req, res) => __awaiter(this, void 0, void 0, function* () {
-        yield db.exec(`update ProductGroup set Name = '${req.body.Name}' where ID = ${req.params.id}`);
-        res.json({
-            success: true
-        });
+    productGroupRouter.put('/ProductGroup/:id', koa_body_1.default(), (ctx) => __awaiter(this, void 0, void 0, function* () {
+        yield db.exec(`update ProductGroup set Name = '${ctx.request.body.Name}' where ID = ${ctx.params.id}`);
+        ctx.status = 204;
     }));
-    app.delete('/ProductGroup/:id', (req, res) => __awaiter(this, void 0, void 0, function* () {
-        yield db.exec(`delete from ProductGroup where ID = ${req.params.id}`);
-        res.json({
-            success: true
-        });
+    productGroupRouter.delete('/ProductGroup/:id', (ctx) => __awaiter(this, void 0, void 0, function* () {
+        yield db.exec(`delete from ProductGroup where ID = ${ctx.params.id}`);
+        ctx.status = 204;
     }));
+    app.use(productGroupRouter.routes());
     app.listen(PORT, () => {
-        console.log(`Application listening on port ${PORT}!`);
+        console.log(`Koa application listening on port ${PORT}!`);
     });
 }))();
 //# sourceMappingURL=index.js.map
