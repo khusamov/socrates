@@ -1,7 +1,7 @@
 import React, {Component, MouseEvent, RefObject} from 'react';
 import Modal from '../modal/Modal';
 import ProductGroupForm, {IProductGroupFormData} from './ProductGroupForm';
-import './ProductGroupList.css';
+import './ProductGroupList.scss';
 
 const {
 	REACT_APP_API_HOST: API_HOST,
@@ -79,6 +79,7 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 				}
 				<Modal visible={this.state.modalVisible}>
 					<div style={{padding: 20}}>
+						<h3>Новая группа товаров/услуг</h3>
 						<ProductGroupForm ref={this.productGroupFormRef} data={this.state.productGroupFormData}/>
 						<button onClick={this.onSubmitButtonClick}>Создать</button>
 						<button onClick={this.onCancelButtonClick}>Закрыть</button>
@@ -92,7 +93,7 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 			method: 'get'
 		});
 
-		const data = await response.json();
+		const data = response.status === 204 ? [] : await response.json();
 
 		this.setState({
 			productGroupList: data

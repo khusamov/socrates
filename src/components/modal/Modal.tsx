@@ -1,5 +1,5 @@
 import React, {Component, Fragment, KeyboardEvent, MouseEvent, RefObject} from 'react';
-import './Modal.css';
+import './Modal.scss';
 
 interface IModalProps {
 	visible: boolean;

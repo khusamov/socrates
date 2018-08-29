@@ -3,18 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "npm-run-all -p watch-scss start-js",
-    "build": "npm-run-all build-css build-js && gulp postbuild",
-    "start-js": "react-scripts-ts start",
-    "build-js": "react-scripts-ts build",
-    "_build-css": "node-sass-chokidar src/ -o src/",
-    "_watch-scss": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
-    "build-css": "node-sass --include-path ./src --include-path ./node_modules src/ -o src/",
-    "watch-scss": "npm run build-css && node-sass --include-path ./src --include-path ./node_modules src/ -o src/ --watch --recursive",
-    "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject",
-    "tsc:w:server": "tsc -p server -w",
-    "nodemon": "nodemon server/dist"
+    "start": "npm-run-all --print-label --parallel server:tsc:w server:nodemon client:start",
+    "client:start": "react-app-rewired start --scripts-version react-scripts-ts",
+    "client:build": "react-app-rewired build --scripts-version react-scripts-ts",
+    "client:test": "react-app-rewired test --scripts-version react-scripts-ts --env=jsdom",
+    "server:tsc:w": "tsc -w -p server",
+    "server:nodemon": "nodemon server/dist"
   },
   "dependencies": {
     "@koa/cors": "^2.2.2",
@@ -43,6 +37,8 @@
     "node-sass-chokidar": "^1.3.3",
     "nodemon": "^1.18.3",
     "npm-run-all": "^4.1.3",
+    "react-app-rewire-scss": "^1.0.2",
+    "react-app-rewired": "^1.5.2",
     "typescript": "^3.0.1"
   }
 }

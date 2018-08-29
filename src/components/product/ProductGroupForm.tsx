@@ -1,5 +1,5 @@
 import React, {ChangeEvent, Component} from 'react';
-import './ProductGroupForm.css';
+import './ProductGroupForm.scss';
 import uuidv1 from 'uuid/v1';
 
 export interface IProductGroupFormData {
