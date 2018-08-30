@@ -18,45 +18,47 @@ const koa_1 = __importDefault(require("koa"));
 const koa_router_1 = __importDefault(require("koa-router"));
 const koa_body_1 = __importDefault(require("koa-body"));
 const PORT = 8081;
-const app = new koa_1.default();
+const app = new koa_1.default;
 (() => __awaiter(this, void 0, void 0, function* () {
     const db = yield sqlite_1.default.open(path_1.default.join(__dirname, '../../db/mscc.db'));
     app.use(cors_1.default());
-    const productGroupRouter = new koa_router_1.default();
-    productGroupRouter.get('/ProductGroup/:id?', (ctx) => __awaiter(this, void 0, void 0, function* () {
+    const productGroupRouter = new koa_router_1.default;
+    productGroupRouter.get('/productGroup/:id?', (ctx) => __awaiter(this, void 0, void 0, function* () {
         if (ctx.params.id) {
-            const data = yield db.all(`select * from ProductGroup where ID = ${ctx.params.id}`);
+            const data = yield db.all(`select * from productGroup where id = ${ctx.params.id}`);
             const record = data[0];
             if (record) {
                 ctx.body = record;
             }
             else {
                 ctx.body = {};
-                ctx.status = 204;
+                ctx.status = 204; // 204 No Content https://goo.gl/JduZSV
             }
         }
         else {
-            const data = yield db.all(`select * from ProductGroup`);
+            const data = yield db.all(`select * from productGroup`);
             if (data.length) {
                 ctx.body = data;
             }
             else {
                 ctx.body = [];
-                ctx.status = 204;
+                ctx.status = 204; // 204 No Content https://goo.gl/JduZSV
             }
         }
     }));
-    productGroupRouter.post('/ProductGroup', koa_body_1.default(), (ctx) => __awaiter(this, void 0, void 0, function* () {
-        yield db.exec(`insert into ProductGroup (Name) values ('${ctx.request.body.Name}')`);
-        ctx.status = 201;
+    productGroupRouter.post('/productGroup', koa_body_1.default(), (ctx) => __awaiter(this, void 0, void 0, function* () {
+        yield db.exec(`insert into productGroup (name) values ('${ctx.request.body.name}')`);
+        const id = yield db.run('select last_insert_rowid()');
+        ctx.status = 201; // 201 Created https://goo.gl/JduZSV
+        ctx.body = yield db.get(`select * from productGroup where id = ${id}`);
     }));
-    productGroupRouter.put('/ProductGroup/:id', koa_body_1.default(), (ctx) => __awaiter(this, void 0, void 0, function* () {
-        yield db.exec(`update ProductGroup set Name = '${ctx.request.body.Name}' where ID = ${ctx.params.id}`);
-        ctx.status = 204;
+    productGroupRouter.put('/productGroup/:id', koa_body_1.default(), (ctx) => __awaiter(this, void 0, void 0, function* () {
+        yield db.exec(`update productGroup set name = '${ctx.request.body.name}' where id = ${ctx.params.id}`);
+        ctx.status = 204; // 204 No Content https://goo.gl/JduZSV
     }));
-    productGroupRouter.delete('/ProductGroup/:id', (ctx) => __awaiter(this, void 0, void 0, function* () {
-        yield db.exec(`delete from ProductGroup where ID = ${ctx.params.id}`);
-        ctx.status = 204;
+    productGroupRouter.delete('/productGroup/:id', (ctx) => __awaiter(this, void 0, void 0, function* () {
+        yield db.exec(`delete from productGroup where id = ${ctx.params.id}`);
+        ctx.status = 204; // 204 No Content https://goo.gl/JduZSV
     }));
     app.use(productGroupRouter.routes());
     app.listen(PORT, () => {

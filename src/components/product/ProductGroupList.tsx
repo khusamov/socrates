@@ -1,38 +1,21 @@
 import React, {Component, MouseEvent, RefObject} from 'react';
 import Modal from '../modal/Modal';
-import ProductGroupForm, {IProductGroupFormData} from './ProductGroupForm';
+import ProductGroupForm from './ProductGroupForm';
 import './ProductGroupList.scss';
-
-const {
-	REACT_APP_API_HOST: API_HOST,
-	REACT_APP_API_PORT: API_PORT
-} = process.env;
+import ProductGroup from './ProductGroup';
 
 interface IProductGroupState {
-	productGroupList: any[];
+	productGroupList: ProductGroup[];
 	modalVisible: boolean;
-	productGroupFormData: IProductGroupFormData;
+	productGroupFormData: ProductGroup;
 }
 
 export default class ProductGroupList extends Component<{}, IProductGroupState> {
-	/**
-	 * Вычисление полного URL сервиса.
-	 * @param {string} path
-	 * @returns {string}
-	 */
-	private static getApiUrl(path: string): string {
-		const serverAddress: string = [API_HOST, API_PORT].filter(s => s).join(':');
-		return (
-			serverAddress
-				? `http://${serverAddress}/${path}`
-				: `/${path}`
-		);
-	}
 
 	public state: IProductGroupState = {
 		productGroupList: [],
 		modalVisible: false,
-		productGroupFormData: {}
+		productGroupFormData: new ProductGroup({name: ''})
 	};
 
 	private readonly productGroupFormRef: RefObject<ProductGroupForm>;
@@ -45,6 +28,7 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 	public async componentDidMount() {
 		await this.loadProductGroupList();
 	}
+
 	public render() {
 		return (
 			<div className='ProductGroupList'>
@@ -63,11 +47,11 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 									this.state.productGroupList.map(
 										(productGroupItem, index) => (
 											<tr key={index}>
-												<td>{productGroupItem.Name}</td>
+												<td>{productGroupItem.data.name}</td>
 												<td>
-													<a href='#' data-id={productGroupItem.ID} onClick={this.onUpdateButtonClick}>Изменить</a>
+													<a href='#' data-id={productGroupItem.data.id} onClick={this.onUpdateButtonClick}>Изменить</a>
 													<span>&nbsp;</span>
-													<a href='#' data-id={productGroupItem.ID} onClick={this.onDeleteButtonClick}>Удалить</a>
+													<a href='#' data-id={productGroupItem.data.id} onClick={this.onDeleteButtonClick}>Удалить</a>
 												</td>
 											</tr>
 										)
@@ -80,7 +64,7 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 				<Modal visible={this.state.modalVisible}>
 					<div style={{padding: 20}}>
 						<h3>Новая группа товаров/услуг</h3>
-						<ProductGroupForm ref={this.productGroupFormRef} data={this.state.productGroupFormData}/>
+						<ProductGroupForm ref={this.productGroupFormRef} productGroup={this.state.productGroupFormData}/>
 						<button onClick={this.onSubmitButtonClick}>Создать</button>
 						<button onClick={this.onCancelButtonClick}>Закрыть</button>
 					</div>
@@ -88,68 +72,57 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 			</div>
 		);
 	}
+
 	private async loadProductGroupList() {
-		const response = await fetch(ProductGroupList.getApiUrl('ProductGroup'), {
-			method: 'get'
-		});
-
-		const data = response.status === 204 ? [] : await response.json();
-
 		this.setState({
-			productGroupList: data
+			productGroupList: await ProductGroup.getAll()
 		});
 	}
+
 	private onInsertButtonClick = (event: MouseEvent) => {
 		this.setState({
 			modalVisible: true,
-			productGroupFormData: {}
+			productGroupFormData: new ProductGroup({name: ''})
 		});
 	};
+
 	private onCancelButtonClick = (event: MouseEvent) => {
 		this.setState({
 			modalVisible: false
 		});
 	};
+
 	private onSubmitButtonClick = async (event: MouseEvent) => {
 		this.setState({
 			modalVisible: false
 		});
 		if (this.productGroupFormRef.current) {
-			const response = await fetch(ProductGroupList.getApiUrl('ProductGroup'), {
-				method: 'post',
-				headers: {
-					'Content-Type': 'application/json; charset=utf-8'
-				},
-				body: JSON.stringify({
-					Name: this.productGroupFormRef.current.state.data.Name
-				})
+
+			const productGroup = new ProductGroup({
+				name: this.productGroupFormRef.current.state.productGroup.data.name
 			});
-			console.log(response);
+
+			await productGroup.save();
+
 			await this.loadProductGroupList();
 		}
 	};
+
 	private onUpdateButtonClick = async (event: MouseEvent<HTMLAnchorElement>) => {
 		const id: number = Number((event.target as HTMLAnchorElement).getAttribute('data-id'));
-
-		const response = await fetch(ProductGroupList.getApiUrl(`ProductGroup/${id}`), {
-			method: 'get'
-		});
-
-		const data = (await response.json()) as IProductGroupFormData;
-
+		const productGroup = await ProductGroup.load(id);
 		this.setState({
 			modalVisible: true,
-			productGroupFormData: {
-				Name: data.Name
-			}
+			productGroupFormData: productGroup
 		});
 	};
+
 	private onDeleteButtonClick = async (event: MouseEvent<HTMLAnchorElement>) => {
 		const id = (event.target as HTMLAnchorElement).getAttribute('data-id');
-		const response = await fetch(ProductGroupList.getApiUrl(`ProductGroup/${id}`), {
-			method: 'delete'
-		});
-		console.log(response);
+		if (id) {
+			await ProductGroup.delete(Number(id));
+		}
 		await this.loadProductGroupList();
 	};
+
 }

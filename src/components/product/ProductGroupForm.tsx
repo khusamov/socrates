@@ -1,58 +1,69 @@
 import React, {ChangeEvent, Component} from 'react';
 import './ProductGroupForm.scss';
 import uuidv1 from 'uuid/v1';
-
-export interface IProductGroupFormData {
-	Name?: string;
-}
+import ProductGroup from './ProductGroup';
 
 interface IProductGroupFormProps {
-	data?: IProductGroupFormData;
+	productGroup?: ProductGroup;
 }
 
 interface IProductGroupFormState {
-	data: IProductGroupFormData;
+	productGroup: ProductGroup;
 }
 
 export default class ProductGroupForm extends Component<IProductGroupFormProps, IProductGroupFormState> {
+
 	public state: IProductGroupFormState = {
-		data: {
-			Name: ''
-		}
+		productGroup: new ProductGroup({
+			name: ''
+		})
 	};
+
 	public componentWillMount() {
-		if (this.props.data) {
+		if (this.props.productGroup) {
 			this.setState({
-				data: {
-					Name: this.props.data.Name || ''
-				}
+				productGroup: new ProductGroup({
+					name: this.props.productGroup.data.name || ''
+				})
 			});
 		}
 	}
+
 	public componentWillReceiveProps(nextProps: IProductGroupFormProps) {
-		if (nextProps.data) {
+		if (nextProps.productGroup) {
 			this.setState({
-				data: {
-					Name: nextProps.data.Name
-				}
+				productGroup: new ProductGroup({
+					name: nextProps.productGroup.data.name
+				})
 			});
 		}
 	}
+
 	public render() {
 		const nameFieldId = uuidv1();
 		return (
 			<form className='ProductGroupForm'>
 				<label htmlFor={nameFieldId}>Наименование группы товаров/услуг:</label>
-				<input type='text' id={nameFieldId} name='Name' value={this.state.data.Name} onChange={this.onInputChange}/>
+				<input
+					type='text'
+					id={nameFieldId}
+					name='name'
+					value={this.state.productGroup.data.name}
+					onChange={this.onInputChange}
+				/>
 			</form>
 		);
 	}
+
 	private onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+		const cloned = this.state.productGroup.clone();
+		cloned.data = {
+			...cloned.data,
+			[event.target.name]: event.target.value
+		};
 		this.setState({
-			data: {
-				...this.state.data,
-				[event.target.name]: event.target.value
-			}
+			productGroup: cloned
 		});
 	}
+
 }

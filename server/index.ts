@@ -6,7 +6,7 @@ import Router from 'koa-router';
 import KoaBody from 'koa-body';
 
 const PORT = 8081;
-const app = new Koa();
+const app = new Koa;
 
 (async () => {
 
@@ -14,42 +14,44 @@ const app = new Koa();
 
 	app.use(Cors());
 
-	const productGroupRouter = new Router();
+	const productGroupRouter = new Router;
 
-	productGroupRouter.get('/ProductGroup/:id?', async (ctx: Context) => {
+	productGroupRouter.get('/productGroup/:id?', async (ctx: Context) => {
 		if (ctx.params.id) {
-			const data = await db.all(`select * from ProductGroup where ID = ${ctx.params.id}`);
+			const data = await db.all(`select * from productGroup where id = ${ctx.params.id}`);
 			const record = data[0];
 			if (record) {
 				ctx.body = record;
 			} else {
 				ctx.body = {};
-				ctx.status = 204;
+				ctx.status = 204; // 204 No Content https://goo.gl/JduZSV
 			}
 		} else {
-			const data = await db.all(`select * from ProductGroup`);
+			const data = await db.all(`select * from productGroup`);
 			if (data.length) {
 				ctx.body = data;
 			} else {
 				ctx.body = [];
-				ctx.status = 204;
+				ctx.status = 204; // 204 No Content https://goo.gl/JduZSV
 			}
 		}
 	});
 
-	productGroupRouter.post('/ProductGroup', KoaBody(), async (ctx: Context) => {
-		await db.exec(`insert into ProductGroup (Name) values ('${ctx.request.body.Name}')`);
-		ctx.status = 201;
+	productGroupRouter.post('/productGroup', KoaBody(), async (ctx: Context) => {
+		await db.exec(`insert into productGroup (name) values ('${ctx.request.body.name}')`);
+		const id = await db.run('select last_insert_rowid()');
+		ctx.status = 201; // 201 Created https://goo.gl/JduZSV
+		ctx.body = await db.get(`select * from productGroup where id = ${id}`);
 	});
 
-	productGroupRouter.put('/ProductGroup/:id', KoaBody(), async (ctx: Context) => {
-		await db.exec(`update ProductGroup set Name = '${ctx.request.body.Name}' where ID = ${ctx.params.id}`);
-		ctx.status = 204;
+	productGroupRouter.put('/productGroup/:id', KoaBody(), async (ctx: Context) => {
+		await db.exec(`update productGroup set name = '${ctx.request.body.name}' where id = ${ctx.params.id}`);
+		ctx.status = 204; // 204 No Content https://goo.gl/JduZSV
 	});
 
-	productGroupRouter.delete('/ProductGroup/:id', async (ctx: Context) => {
-		await db.exec(`delete from ProductGroup where ID = ${ctx.params.id}`);
-		ctx.status = 204;
+	productGroupRouter.delete('/productGroup/:id', async (ctx: Context) => {
+		await db.exec(`delete from productGroup where id = ${ctx.params.id}`);
+		ctx.status = 204; // 204 No Content https://goo.gl/JduZSV
 	});
 
 	app.use(productGroupRouter.routes());
