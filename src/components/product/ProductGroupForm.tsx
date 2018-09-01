@@ -22,9 +22,7 @@ export default class ProductGroupForm extends Component<IProductGroupFormProps, 
 	public componentWillMount() {
 		if (this.props.productGroup) {
 			this.setState({
-				productGroup: new ProductGroup({
-					name: this.props.productGroup.data.name || ''
-				})
+				productGroup: this.props.productGroup.clone()
 			});
 		}
 	}
@@ -32,9 +30,7 @@ export default class ProductGroupForm extends Component<IProductGroupFormProps, 
 	public componentWillReceiveProps(nextProps: IProductGroupFormProps) {
 		if (nextProps.productGroup) {
 			this.setState({
-				productGroup: new ProductGroup({
-					name: nextProps.productGroup.data.name
-				})
+				productGroup: nextProps.productGroup.clone()
 			});
 		}
 	}

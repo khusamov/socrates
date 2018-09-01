@@ -1,8 +1,10 @@
-import React, {Component, MouseEvent, RefObject} from 'react';
+import React, {Component, MouseEvent, RefObject, Fragment} from 'react';
 import Modal from '../modal/Modal';
 import ProductGroupForm from './ProductGroupForm';
 import './ProductGroupList.scss';
 import ProductGroup from './ProductGroup';
+import Table from '@library/table/Table';
+import Column from '@library/table/Column';
 
 interface IProductGroupState {
 	productGroupList: ProductGroup[];
@@ -33,34 +35,18 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 		return (
 			<div className='ProductGroupList'>
 				<button onClick={this.onInsertButtonClick}>Новая запись</button>
-				{
-					!!this.state.productGroupList.length && (
-						<table>
-							<thead>
-								<tr>
-									<th>Наименование группы товаров/услуг</th>
-									<th/>
-								</tr>
-							</thead>
-							<tbody>
-								{
-									this.state.productGroupList.map(
-										(productGroupItem, index) => (
-											<tr key={index}>
-												<td>{productGroupItem.data.name}</td>
-												<td>
-													<a href='#' data-id={productGroupItem.data.id} onClick={this.onUpdateButtonClick}>Изменить</a>
-													<span>&nbsp;</span>
-													<a href='#' data-id={productGroupItem.data.id} onClick={this.onDeleteButtonClick}>Удалить</a>
-												</td>
-											</tr>
-										)
-									)
-								}
-							</tbody>
-						</table>
-					)
-				}
+				<Table data={this.state.productGroupList}>
+					<Column title='Наименование группы товаров/услуг' dataIndex='data.name'/>
+					<Column>
+						{(productGroup: ProductGroup) => (
+							<Fragment>
+								<a href='#' data-id={productGroup.data.id} onClick={this.onUpdateButtonClick}>Изменить</a>
+								<span>&nbsp;</span>
+								<a href='#' data-id={productGroup.data.id} onClick={this.onDeleteButtonClick}>Удалить</a>
+							</Fragment>
+						)}
+					</Column>
+				</Table>
 				<Modal visible={this.state.modalVisible}>
 					<div style={{padding: 20}}>
 						<h3>Новая группа товаров/услуг</h3>

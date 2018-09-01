@@ -16,24 +16,4 @@
 			background-color: aqua;
 		}
 	}
-	table {
-		border: {
-			collapse: collapse;
-			top: 1px solid black;
-			left: 1px solid black;
-		}
-		th {
-			background-color: rgba(19, 205, 255, 0.21);
-		}
-		td {
-			background-color: aliceblue;
-		}
-		th, td {
-			padding: 5px;
-			border: {
-				bottom: 1px solid black;
-				right: 1px solid black;
-			}
-		}
-	}
 }

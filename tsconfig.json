@@ -18,7 +18,11 @@
     "suppressImplicitAnyIndexErrors": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "paths": {
+      "@library": ["src/library"],
+      "@library/*": ["src/library/*"]
+    }
   },
   "exclude": [
     "server",

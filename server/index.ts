@@ -18,8 +18,7 @@ const app = new Koa;
 
 	productGroupRouter.get('/productGroup/:id?', async (ctx: Context) => {
 		if (ctx.params.id) {
-			const data = await db.all(`select * from productGroup where id = ${ctx.params.id}`);
-			const record = data[0];
+			const record = await db.get(`select * from productGroup where id = ${ctx.params.id}`);
 			if (record) {
 				ctx.body = record;
 			} else {
@@ -39,7 +38,7 @@ const app = new Koa;
 
 	productGroupRouter.post('/productGroup', KoaBody(), async (ctx: Context) => {
 		await db.exec(`insert into productGroup (name) values ('${ctx.request.body.name}')`);
-		const id = await db.run('select last_insert_rowid()');
+		const id = (await db.get('select last_insert_rowid() as id')).id;
 		ctx.status = 201; // 201 Created https://goo.gl/JduZSV
 		ctx.body = await db.get(`select * from productGroup where id = ${id}`);
 	});
