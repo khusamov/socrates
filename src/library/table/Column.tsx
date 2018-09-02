@@ -17,7 +17,7 @@ interface IColumnProps {
 	dataIndex?: string;
 }
 
-export type TRendererFunction = (record: any) => ReactNode;
+export type TRendererFunction<D = any> = (record: any, data: D[]) => ReactNode;
 
 /**
  * Колонка таблицы.
@@ -38,7 +38,7 @@ export default class Column extends Component<IColumnProps> {
 							<TableContextConsumer>
 								{({data}: ITableContext<any>) => (
 									<RecordContextConsumer>
-										{record => <td>{renderer(record)}</td>}
+										{record => <td>{renderer(record, data)}</td>}
 									</RecordContextConsumer>
 								)}
 							</TableContextConsumer>

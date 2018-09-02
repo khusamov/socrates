@@ -2,9 +2,13 @@ import React, {ChangeEvent, Component} from 'react';
 import './ProductGroupForm.scss';
 import uuidv1 from 'uuid/v1';
 import ProductGroup from './ProductGroup';
+import Button from '@library/button/Button';
+import Panel, {Content, Title, Footer} from '@library/panel/Panel';
 
 interface IProductGroupFormProps {
 	productGroup?: ProductGroup;
+	onSubmit?: () => void;
+	onCancel?: () => void;
 }
 
 interface IProductGroupFormState {
@@ -38,15 +42,24 @@ export default class ProductGroupForm extends Component<IProductGroupFormProps, 
 	public render() {
 		const nameFieldId = uuidv1();
 		return (
-			<form className='ProductGroupForm'>
-				<label htmlFor={nameFieldId}>Наименование группы товаров/услуг:</label>
-				<input
-					type='text'
-					id={nameFieldId}
-					name='name'
-					value={this.state.productGroup.data.name}
-					onChange={this.onInputChange}
-				/>
+			<form className='ProductGroupForm' onSubmit={this.props.onSubmit}>
+				<Panel>
+					<Title>Новая группа товаров/услуг</Title>
+					<Content style={{padding: 10}}>
+						<label htmlFor={nameFieldId}>Наименование группы товаров/услуг:</label>
+						<input
+							id={nameFieldId}
+							type='text'
+							name='name'
+							value={this.state.productGroup.data.name}
+							onChange={this.onInputChange}
+						/>
+					</Content>
+					<Footer style={{padding: 10}}>
+						<Button type='submit'>Создать</Button>
+						<Button onClick={this.props.onCancel}>Закрыть</Button>
+					</Footer>
+				</Panel>
 			</form>
 		);
 	}
@@ -60,6 +73,6 @@ export default class ProductGroupForm extends Component<IProductGroupFormProps, 
 		this.setState({
 			productGroup: cloned
 		});
-	}
+	};
 
 }

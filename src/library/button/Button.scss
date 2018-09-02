@@ -1,0 +1,17 @@
+.Button {
+	$background-color: bisque;
+	padding: 7px 12px;
+	cursor: pointer;
+	background-color: $background-color;
+	border: 1px solid black;
+	outline: none;
+	&:hover {
+		background-color: darken($background-color, 20%);
+	}
+	&:active {
+		background-color: #fffefd;
+	}
+	&:focus {
+		border-color: red;
+	}
+}

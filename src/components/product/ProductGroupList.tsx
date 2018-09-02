@@ -1,15 +1,16 @@
-import React, {Component, MouseEvent, RefObject, Fragment} from 'react';
-import Modal from '../modal/Modal';
+import React, {Component, MouseEvent, RefObject, Fragment, ReactNode} from 'react';
+import Modal from '../../library/modal/Modal';
 import ProductGroupForm from './ProductGroupForm';
 import './ProductGroupList.scss';
 import ProductGroup from './ProductGroup';
-import Table from '@library/table/Table';
-import Column from '@library/table/Column';
+import Table, {Column} from '@library/table/Table';
+import Button from '@library/button/Button';
+import Panel, {Title, Content, Docked} from '@library/panel/Panel';
 
 interface IProductGroupState {
 	productGroupList: ProductGroup[];
-	modalVisible: boolean;
 	productGroupFormData: ProductGroup;
+	modalVisible: boolean;
 }
 
 export default class ProductGroupList extends Component<{}, IProductGroupState> {
@@ -31,33 +32,71 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 		await this.loadProductGroupList();
 	}
 
-	public render() {
+	public render(): ReactNode {
 		return (
 			<div className='ProductGroupList'>
-				<button onClick={this.onInsertButtonClick}>Новая запись</button>
-				<Table data={this.state.productGroupList}>
-					<Column title='Наименование группы товаров/услуг' dataIndex='data.name'/>
-					<Column>
-						{(productGroup: ProductGroup) => (
-							<Fragment>
-								<a href='#' data-id={productGroup.data.id} onClick={this.onUpdateButtonClick}>Изменить</a>
-								<span>&nbsp;</span>
-								<a href='#' data-id={productGroup.data.id} onClick={this.onDeleteButtonClick}>Удалить</a>
-							</Fragment>
-						)}
-					</Column>
-				</Table>
-				<Modal visible={this.state.modalVisible}>
-					<div style={{padding: 20}}>
-						<h3>Новая группа товаров/услуг</h3>
-						<ProductGroupForm ref={this.productGroupFormRef} productGroup={this.state.productGroupFormData}/>
-						<button onClick={this.onSubmitButtonClick}>Создать</button>
-						<button onClick={this.onCancelButtonClick}>Закрыть</button>
-					</div>
-				</Modal>
+				<Panel>
+					<Title>Группы товаров/услуг</Title>
+					<Docked style={{padding: 10}}>
+						<Button onClick={this.onInsertButtonClick}>Новая запись</Button>
+					</Docked>
+					<Content>
+						{this.renderTable()}
+					</Content>
+				</Panel>
+				{this.renderModal()}
 			</div>
 		);
 	}
+
+	private renderTable(): ReactNode {
+		return (
+			<Table data={this.state.productGroupList}>
+				<Column title='Наименование группы товаров/услуг' dataIndex='data.name'/>
+				<Column>
+					{(productGroup: ProductGroup) => (
+						<Fragment>
+							<a href='#' data-id={productGroup.data.id} onClick={this.onUpdateButtonClick}>Изменить</a>
+							<span>&nbsp;</span>
+							<a href='#' data-id={productGroup.data.id} onClick={this.onDeleteButtonClick}>Удалить</a>
+						</Fragment>
+					)}
+				</Column>
+			</Table>
+		);
+	}
+
+	private renderModal(): ReactNode {
+		return (
+			<Modal visible={this.state.modalVisible}>
+				<ProductGroupForm
+					ref={this.productGroupFormRef}
+					productGroup={this.state.productGroupFormData}
+					onSubmit={this.ProductGroupFormSubmit}
+					onCancel={this.ProductGroupFormCancel}
+				/>
+			</Modal>
+		);
+	}
+
+	private ProductGroupFormSubmit = async () => {
+		this.setState({
+			modalVisible: false
+		});
+		if (this.productGroupFormRef.current) {
+			const productGroup = new ProductGroup({
+				name: this.productGroupFormRef.current.state.productGroup.data.name
+			});
+			await productGroup.save();
+			await this.loadProductGroupList();
+		}
+	};
+
+	private ProductGroupFormCancel = () => {
+		this.setState({
+			modalVisible: false
+		});
+	};
 
 	private async loadProductGroupList() {
 		this.setState({
@@ -65,33 +104,11 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 		});
 	}
 
-	private onInsertButtonClick = (event: MouseEvent) => {
+	private onInsertButtonClick = () => {
 		this.setState({
 			modalVisible: true,
 			productGroupFormData: new ProductGroup({name: ''})
 		});
-	};
-
-	private onCancelButtonClick = (event: MouseEvent) => {
-		this.setState({
-			modalVisible: false
-		});
-	};
-
-	private onSubmitButtonClick = async (event: MouseEvent) => {
-		this.setState({
-			modalVisible: false
-		});
-		if (this.productGroupFormRef.current) {
-
-			const productGroup = new ProductGroup({
-				name: this.productGroupFormRef.current.state.productGroup.data.name
-			});
-
-			await productGroup.save();
-
-			await this.loadProductGroupList();
-		}
 	};
 
 	private onUpdateButtonClick = async (event: MouseEvent<HTMLAnchorElement>) => {

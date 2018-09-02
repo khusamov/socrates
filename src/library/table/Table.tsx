@@ -4,7 +4,7 @@ import {Provider as ColumnContextProvider} from './ColumnContext';
 import Column from './Column';
 import {Provider as TableContextProvider} from './TableContext';
 import {Provider as RecordContextProvider} from './RecordContext';
-
+export {default as Column} from './Column';
 
 // TODO Если TableContextProvider не будет использоваться, то его надо удалить
 
@@ -48,6 +48,12 @@ export default class Table<D> extends Component<ITableProps<D>> {
 	private getColumns() {
 		return Children.map(this.props.children, child => {
 			if (isReactElement(child)) {
+
+				// console.log(child.type.toString()) // Symbol(react.fragment)
+				// if (child.type.toString() !== 'Symbol(react.fragment)') {
+				// 	throw new Error('Fragment');
+				// }
+
 				if (child.type !== Column) {
 					throw new Error('В компоненте <Table> разрешено размещать только <Column>');
 				}

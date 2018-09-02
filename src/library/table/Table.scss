@@ -1,15 +1,19 @@
+
+// Все элементы кроме последнего.
+$all-but-the-last: '&:not(:nth-last-child(1))';
+
 table.Table {
+
+	$border: 1px solid bisque;
 
 	border: {
 		collapse: collapse;
-		top: 1px solid black;
-		left: 1px solid black;
 	}
 
 	> thead {
 		> tr {
 			> th {
-				background-color: rgba(19, 205, 255, 0.21);
+				background-color: bisque;
 			}
 		}
 	}
@@ -17,7 +21,7 @@ table.Table {
 	> tbody {
 		> tr {
 			> td {
-				background-color: aliceblue;
+
 			}
 		}
 
@@ -25,15 +29,45 @@ table.Table {
 
 	> thead, > tbody {
 		> tr {
+			#{$all-but-the-last} {
+				> th, > td {
+					border: {
+						bottom: $border;
+					}
+				}
+			}
 			> th, > td {
 				padding: 5px;
-				border: {
-					bottom: 1px solid black;
-					right: 1px solid black;
+				#{$all-but-the-last} {
+					border: {
+						//right: $border;
+					}
 				}
 			}
 		}
 
 	}
 
+
+	// Рамка вокруг таблицы. По умолчанию рамка включена только между строк.
+	&.out-border {
+		border: {
+			top: $border;
+			left: $border;
+		}
+		> thead, > tbody {
+			> tr {
+				> th, > td {
+					border: {
+						right: $border;
+					}
+				}
+			}
+
+		}
+	}
+
+
+
 }
+
