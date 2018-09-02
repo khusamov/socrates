@@ -83,13 +83,27 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 	}
 
 	private ProductGroupFormSubmit = async () => {
-		this.setState({
-			modalVisible: false
-		});
-		if (this.productGroupFormRef.current) {
-			const productGroup = new ProductGroup({
-				name: this.productGroupFormRef.current.state.productGroup.data.name
+		const productGroupForm: ProductGroupForm | null = this.productGroupFormRef.current;
+		if (productGroupForm) {
+			this.setState({
+				modalVisible: false
 			});
+
+			let productGroup: ProductGroup;
+			switch (productGroupForm.props.mode) {
+				case 'insert':
+					productGroup = new ProductGroup({
+						name: productGroupForm.state.productGroup.data.name
+					});
+					break;
+				case 'update':
+					productGroup = await ProductGroup.load(this.state.productGroupFormData.data.id as number);
+					productGroup.data.name = productGroupForm.state.productGroup.data.name;
+					break;
+				default:
+					throw new Error(`Неизвестный режим формы ${productGroupForm.props.mode}`);
+			}
+
 			await productGroup.save();
 			await this.loadProductGroupList();
 		}

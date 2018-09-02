@@ -17,7 +17,9 @@ export default class ProductGroup {
 	public static async load(id: number): Promise<ProductGroup> {
 		const response = await this.fetch(id, {method: 'get'});
 		const data = (await response.json()) as IProductGroup;
-		return new ProductGroup(data);
+		const productGroup = new ProductGroup(data);
+		productGroup.phantom = false;
+		return productGroup;
 	}
 
 	/**
