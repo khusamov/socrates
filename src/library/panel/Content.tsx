@@ -8,7 +8,7 @@ interface IContentProps {
 export default class Content extends Component<IContentProps> {
 	public render(): ReactNode {
 		return (
-			<div className='Body' style={this.props.style}>
+			<div className='Content' style={this.props.style}>
 				{this.props.children}
 			</div>
 		);

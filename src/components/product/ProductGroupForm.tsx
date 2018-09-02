@@ -3,7 +3,7 @@ import './ProductGroupForm.scss';
 import uuidv1 from 'uuid/v1';
 import ProductGroup from './ProductGroup';
 import Button from '@library/button/Button';
-import Panel, {Content, Title, Footer} from '@library/panel/Panel';
+import Panel, {Content, Title, Footer, Header} from '@library/panel/Panel';
 
 export type TMode = 'insert' | 'update';
 
@@ -57,7 +57,9 @@ export default class ProductGroupForm extends Component<IProductGroupFormProps, 
 		return (
 			<form className='ProductGroupForm' onSubmit={this.props.onSubmit}>
 				<Panel>
-					<Title>{formTitle[this.props.mode]}</Title>
+					<Header>
+						<Title>{formTitle[this.props.mode]}</Title>
+					</Header>
 					<Content style={{padding: 10}}>
 						<label htmlFor={nameFieldId}>Наименование группы товаров/услуг:</label>
 						<input
