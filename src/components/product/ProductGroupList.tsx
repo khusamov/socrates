@@ -1,6 +1,6 @@
 import React, {Component, MouseEvent, RefObject, Fragment, ReactNode} from 'react';
 import Modal from '../../library/modal/Modal';
-import ProductGroupForm from './ProductGroupForm';
+import ProductGroupForm, {TMode as TProductGroupFormMode} from './ProductGroupForm';
 import './ProductGroupList.scss';
 import ProductGroup from './ProductGroup';
 import Table, {Column} from '@library/table/Table';
@@ -11,6 +11,7 @@ interface IProductGroupState {
 	productGroupList: ProductGroup[];
 	productGroupFormData: ProductGroup;
 	modalVisible: boolean;
+	productGroupFormMode: TProductGroupFormMode;
 }
 
 export default class ProductGroupList extends Component<{}, IProductGroupState> {
@@ -18,7 +19,8 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 	public state: IProductGroupState = {
 		productGroupList: [],
 		modalVisible: false,
-		productGroupFormData: new ProductGroup({name: ''})
+		productGroupFormData: new ProductGroup({name: ''}),
+		productGroupFormMode: 'insert'
 	};
 
 	private readonly productGroupFormRef: RefObject<ProductGroupForm>;
@@ -71,6 +73,7 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 			<Modal visible={this.state.modalVisible}>
 				<ProductGroupForm
 					ref={this.productGroupFormRef}
+					mode={this.state.productGroupFormMode}
 					productGroup={this.state.productGroupFormData}
 					onSubmit={this.ProductGroupFormSubmit}
 					onCancel={this.ProductGroupFormCancel}
@@ -107,6 +110,7 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 	private onInsertButtonClick = () => {
 		this.setState({
 			modalVisible: true,
+			productGroupFormMode: 'insert',
 			productGroupFormData: new ProductGroup({name: ''})
 		});
 	};
@@ -116,6 +120,7 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 		const productGroup = await ProductGroup.load(id);
 		this.setState({
 			modalVisible: true,
+			productGroupFormMode: 'update',
 			productGroupFormData: productGroup
 		});
 	};

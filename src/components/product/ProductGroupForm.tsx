@@ -5,11 +5,24 @@ import ProductGroup from './ProductGroup';
 import Button from '@library/button/Button';
 import Panel, {Content, Title, Footer} from '@library/panel/Panel';
 
+export type TMode = 'insert' | 'update';
+
 interface IProductGroupFormProps {
 	productGroup?: ProductGroup;
 	onSubmit?: () => void;
 	onCancel?: () => void;
+	mode: TMode;
 }
+
+const submitButtonCaption = {
+	insert: 'Создать',
+	update: 'Изменить'
+};
+
+const formTitle = {
+	insert: 'Новая группа товаров/услуг',
+	update: 'Изменить группу товаров/услуг'
+};
 
 interface IProductGroupFormState {
 	productGroup: ProductGroup;
@@ -44,7 +57,7 @@ export default class ProductGroupForm extends Component<IProductGroupFormProps, 
 		return (
 			<form className='ProductGroupForm' onSubmit={this.props.onSubmit}>
 				<Panel>
-					<Title>Новая группа товаров/услуг</Title>
+					<Title>{formTitle[this.props.mode]}</Title>
 					<Content style={{padding: 10}}>
 						<label htmlFor={nameFieldId}>Наименование группы товаров/услуг:</label>
 						<input
@@ -56,7 +69,7 @@ export default class ProductGroupForm extends Component<IProductGroupFormProps, 
 						/>
 					</Content>
 					<Footer style={{padding: 10}}>
-						<Button type='submit'>Создать</Button>
+						<Button type='submit'>{submitButtonCaption[this.props.mode]}</Button>
 						<Button onClick={this.props.onCancel}>Закрыть</Button>
 					</Footer>
 				</Panel>
