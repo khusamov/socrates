@@ -70,7 +70,7 @@ export default class ProductGroupForm extends Component<IProductGroupFormProps, 
 					</Content>
 					<Footer style={{padding: 10}}>
 						<Button type='submit'>{submitButtonCaption[this.props.mode]}</Button>
-						<Button onClick={this.props.onCancel}>Закрыть</Button>
+						<Button type='button' onClick={this.props.onCancel}>Отмена</Button>
 					</Footer>
 				</Panel>
 			</form>
