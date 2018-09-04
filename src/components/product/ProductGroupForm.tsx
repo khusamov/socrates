@@ -25,21 +25,15 @@ const formTitle = {
 };
 
 interface IProductGroupFormState {
-	productGroup: ProductGroup;
+	productGroup?: ProductGroup;
 }
 
 export default class ProductGroupForm extends Component<IProductGroupFormProps, IProductGroupFormState> {
 
-	public state: IProductGroupFormState = {
-		productGroup: new ProductGroup({
-			name: ''
-		})
-	};
-
 	public componentWillMount() {
 		if (this.props.productGroup) {
 			this.setState({
-				productGroup: this.props.productGroup.clone()
+				productGroup: this.props.productGroup.clone<ProductGroup>()
 			});
 		}
 	}
@@ -47,13 +41,14 @@ export default class ProductGroupForm extends Component<IProductGroupFormProps, 
 	public componentWillReceiveProps(nextProps: IProductGroupFormProps) {
 		if (nextProps.productGroup) {
 			this.setState({
-				productGroup: nextProps.productGroup.clone()
+				productGroup: nextProps.productGroup.clone<ProductGroup>()
 			});
 		}
 	}
 
 	public render() {
 		const nameFieldId = uuidv1();
+		const {name = ''} = this.state.productGroup ? this.state.productGroup.data : {};
 		return (
 			<form className='ProductGroupForm' onSubmit={this.props.onSubmit}>
 				<Panel>
@@ -66,7 +61,7 @@ export default class ProductGroupForm extends Component<IProductGroupFormProps, 
 							id={nameFieldId}
 							type='text'
 							name='name'
-							value={this.state.productGroup.data.name}
+							value={name}
 							onChange={this.onInputChange}
 						/>
 					</Content>
@@ -80,14 +75,16 @@ export default class ProductGroupForm extends Component<IProductGroupFormProps, 
 	}
 
 	private onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-		const cloned = this.state.productGroup.clone();
-		cloned.data = {
-			...cloned.data,
-			[event.target.name]: event.target.value
-		};
-		this.setState({
-			productGroup: cloned
-		});
+		if (this.state.productGroup) {
+			const cloned = this.state.productGroup.clone();
+			cloned.data = {
+				...cloned.data,
+				[event.target.name]: event.target.value
+			};
+			this.setState({
+				productGroup: cloned
+			});
+		}
 	};
 
 }
