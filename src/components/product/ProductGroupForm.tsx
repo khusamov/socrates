@@ -33,7 +33,7 @@ export default class ProductGroupForm extends Component<IProductGroupFormProps, 
 	public componentWillMount() {
 		if (this.props.productGroup) {
 			this.setState({
-				productGroup: this.props.productGroup.clone<ProductGroup>()
+				productGroup: ProductGroup.store.clone(this.props.productGroup)
 			});
 		}
 	}
@@ -41,14 +41,14 @@ export default class ProductGroupForm extends Component<IProductGroupFormProps, 
 	public componentWillReceiveProps(nextProps: IProductGroupFormProps) {
 		if (nextProps.productGroup) {
 			this.setState({
-				productGroup: nextProps.productGroup.clone<ProductGroup>()
+				productGroup: ProductGroup.store.clone(nextProps.productGroup)
 			});
 		}
 	}
 
 	public render() {
 		const nameFieldId = uuidv1();
-		const {name = ''} = this.state.productGroup ? this.state.productGroup.data : {};
+		const {name = ''} = this.state.productGroup ? this.state.productGroup.rawData : {};
 		return (
 			<form className='ProductGroupForm' onSubmit={this.props.onSubmit}>
 				<Panel>
@@ -76,9 +76,9 @@ export default class ProductGroupForm extends Component<IProductGroupFormProps, 
 
 	private onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
 		if (this.state.productGroup) {
-			const cloned = this.state.productGroup.clone();
-			cloned.data = {
-				...cloned.data,
+			const cloned = ProductGroup.store.clone(this.state.productGroup);
+			cloned.rawData = {
+				...cloned.rawData,
 				[event.target.name]: event.target.value
 			};
 			this.setState({

@@ -18,7 +18,7 @@ const app = new Koa;
 
 	productGroupRouter.get('/productGroup/:id?', async (ctx: Context) => {
 		if (ctx.params.id) {
-			const record = await db.get(`select * from productGroup where id = ${ctx.params.id}`);
+			const record = await db.get(`select * from productGroup where id = ?`, ctx.params.id);
 			if (record) {
 				ctx.body = record;
 			} else {
@@ -45,12 +45,12 @@ const app = new Koa;
 
 	productGroupRouter.put('/productGroup/:id', KoaBody(), async (ctx: Context) => {
 		await db.exec(`update productGroup set name = '${ctx.request.body.name}' where id = ${ctx.params.id}`);
-		ctx.status = 204; // 204 No Content https://goo.gl/JduZSV
+		ctx.status = 200;
 	});
 
 	productGroupRouter.delete('/productGroup/:id', async (ctx: Context) => {
 		await db.exec(`delete from productGroup where id = ${ctx.params.id}`);
-		ctx.status = 204; // 204 No Content https://goo.gl/JduZSV
+		ctx.status = 200;
 	});
 
 	app.use(productGroupRouter.routes());

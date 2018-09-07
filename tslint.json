@@ -4,7 +4,12 @@
     "no-console": false,
     "ordered-imports": false,
     "object-literal-sort-keys": false,
-    "no-empty": [true, "allow-empty-functions"]
+    "no-empty": [true, "allow-empty-functions"],
+    "variable-name": [
+      true,
+      "allow-leading-underscore",
+      "allow-pascal-case"
+    ]
   },
   "linterOptions": {
     "exclude": [

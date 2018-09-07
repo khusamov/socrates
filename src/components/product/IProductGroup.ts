@@ -1,5 +1,5 @@
-import {IResourceModel} from '@library/rest/resource/ResourceModel';
+import {IRestRecord} from '@library/rest/RestProxy';
 
-export default interface IProductGroup extends IResourceModel {
+export default interface IProductGroup extends IRestRecord {
 	name: string;
 }

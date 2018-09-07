@@ -1,11 +1,22 @@
 import React, {Component, MouseEvent, RefObject, Fragment, ReactNode} from 'react';
+import './ProductGroupList.scss';
 import Modal from '../../library/modal/Modal';
 import ProductGroupForm, {TMode as TProductGroupFormMode} from './ProductGroupForm';
-import './ProductGroupList.scss';
-import ProductGroup from './ProductGroup';
+// import IProductGroup from './IProductGroup';
 import Table, {Column} from '@library/table/Table';
 import Button from '@library/button/Button';
 import Panel, {Title, Content, Docked} from '@library/panel/Panel';
+// import Resource from '@library/rest/resource/Resource';
+// import RestProxy from '@library/rest/RestProxy';
+
+import ProductGroup from './ProductGroup';
+// import ProductGroupStore from './ProductGroupStore';
+
+
+
+
+
+
 
 interface IProductGroupState {
 	productGroupList: ProductGroup[];
@@ -54,13 +65,13 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 	private renderTable(): ReactNode {
 		return (
 			<Table data={this.state.productGroupList}>
-				<Column title='Наименование группы товаров/услуг' dataIndex='data.name'/>
+				<Column title='Наименование группы товаров/услуг' dataIndex='rawData.name'/>
 				<Column>
 					{(productGroup: ProductGroup) => (
 						<Fragment>
-							<a href='#' data-id={productGroup.data.id} onClick={this.onUpdateButtonClick}>Изменить</a>
+							<a href='#' data-id={productGroup.rawData.id} onClick={this.onUpdateButtonClick}>Изменить</a>
 							<span>&nbsp;</span>
-							<a href='#' data-id={productGroup.data.id} onClick={this.onDeleteButtonClick}>Удалить</a>
+							<a href='#' data-id={productGroup.rawData.id} onClick={this.onDeleteButtonClick}>Удалить</a>
 						</Fragment>
 					)}
 				</Column>
@@ -85,27 +96,30 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 	private ProductGroupFormSubmit = async () => {
 		const productGroupForm: ProductGroupForm | null = this.productGroupFormRef.current;
 		if (productGroupForm) {
-			this.setState({
-				modalVisible: false
-			});
+			const productGroup = productGroupForm.state.productGroup;
+			if (productGroup) {
+				this.setState({
+					modalVisible: false
+				});
 
-			let productGroup: ProductGroup;
-			switch (productGroupForm.props.mode) {
-				case 'insert':
-					productGroup = new ProductGroup({
-						name: productGroupForm.state.productGroup.data.name
-					});
-					break;
-				case 'update':
-					productGroup = await ProductGroup.load(this.state.productGroupFormData.data.id as number);
-					productGroup.data.name = productGroupForm.state.productGroup.data.name;
-					break;
-				default:
-					throw new Error(`Неизвестный режим формы ${productGroupForm.props.mode}`);
+				let newProductGroup: ProductGroup;
+				switch (productGroupForm.props.mode) {
+					case 'insert':
+						newProductGroup = new ProductGroup({
+							name: productGroup.rawData.name
+						});
+						break;
+					case 'update':
+						newProductGroup = await ProductGroup.store.getOne(this.state.productGroupFormData.rawData.id as number);
+						newProductGroup.rawData.name = productGroup.rawData.name;
+						break;
+					default:
+						throw new Error(`Неизвестный режим формы ${productGroupForm.props.mode}`);
+				}
+
+				await newProductGroup.save();
+				await this.loadProductGroupList();
 			}
-
-			await productGroup.save();
-			await this.loadProductGroupList();
 		}
 	};
 
@@ -117,7 +131,7 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 
 	private async loadProductGroupList() {
 		this.setState({
-			productGroupList: await ProductGroup.getAll()
+			productGroupList: await ProductGroup.store.getAll()
 		});
 	}
 
@@ -131,7 +145,7 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 
 	private onUpdateButtonClick = async (event: MouseEvent<HTMLAnchorElement>) => {
 		const id: number = Number((event.target as HTMLAnchorElement).getAttribute('data-id'));
-		const productGroup = await ProductGroup.load(id);
+		const productGroup = await ProductGroup.store.getOne(id);
 		this.setState({
 			modalVisible: true,
 			productGroupFormMode: 'update',
@@ -142,7 +156,7 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 	private onDeleteButtonClick = async (event: MouseEvent<HTMLAnchorElement>) => {
 		const id = (event.target as HTMLAnchorElement).getAttribute('data-id');
 		if (id) {
-			await ProductGroup.delete(Number(id));
+			await ProductGroup.store.delete(Number(id));
 		}
 		await this.loadProductGroupList();
 	};

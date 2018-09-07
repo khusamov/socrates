@@ -1,11 +1,12 @@
 import camelcase from 'camelcase';
-// import Resource from './Resource';
+import RestProxy, {IRestRecord} from '../RestProxy';
+// import RestStore from '@library/rest/RestStore';
 
-export interface IResourceModel {
-	id?: number;
-}
+export default class ResourceModel<T extends IRestRecord> {
 
-export default class ResourceModel<T extends IResourceModel = IResourceModel> {
+	// public static get store(): RestStore<typeof ResourceModel, ResourceModel<IRestRecord>> {
+	// 	return new RestStore<typeof ResourceModel, ResourceModel<IRestRecord>>(this);
+	// }
 
 	/**
 	 * Имя ресурса.
@@ -15,26 +16,32 @@ export default class ResourceModel<T extends IResourceModel = IResourceModel> {
 	}
 
 	/**
-	 * Конструктор объекта ресурса.
-	 * @param data
-	 * @param phantom Фантомные объекты (phantom === true) не имеют соответствующей записи на сервере и не имеют своего ID.
+	 * Фантомные объекты (phantom === true) не имеют соответствующей записи
+	 * на сервере и не имеют своего ID.
 	 */
-	constructor(public data: T, public phantom: boolean = true) {}
+	public phantom: boolean;
+
+	private readonly proxy: RestProxy<T>;
+
+	/**
+	 * Конструктор объекта ресурса.
+	 * @param rawData = {}
+	 */
+	constructor(public rawData: T = {} as T) {
+		this.phantom = !('id' in rawData);
+		this.proxy = new RestProxy<T>((this.constructor as typeof ResourceModel).resourceName);
+	}
 
 	/**
 	 * Сохранить запись на сервере.
 	 */
 	public async save() {
-		// if (this.phantom) {
-		// 	this.data.id = await Resource.post(this.data);
-		// 	this.phantom = false;
-		// } else {
-		// 	await Resource.put(this.data.id as number, this.data);
-		// }
-	}
-
-	public clone<C extends ResourceModel = ResourceModel>(): C {
-		return new (this.constructor as {new(data: T): C})(this.data);
+		if (this.phantom) {
+			this.rawData.id = await this.proxy.post(this.rawData);
+			this.phantom = false;
+		} else {
+			await this.proxy.put(this.rawData.id as number, this.rawData);
+		}
 	}
 
 }
