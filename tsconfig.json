@@ -19,6 +19,8 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "noUnusedLocals": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "paths": {
       "@library": ["src/library"],
       "@library/*": ["src/library/*"]
