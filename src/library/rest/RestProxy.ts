@@ -77,7 +77,7 @@ export default class RestProxy<D extends IRestRecord> {
 			},
 			body: JSON.stringify(data)
 		});
-		if (response.status !== 201) {
+		if (!response.ok) {
 			throw new Error(`Ошибка ${response.status} на сервере!`);
 		}
 		const responseData = await response.json() as D;
@@ -97,7 +97,7 @@ export default class RestProxy<D extends IRestRecord> {
 			},
 			body: JSON.stringify(data)
 		});
-		if (response.status !== 200) {
+		if (!response.ok) {
 			throw new Error(`Ошибка ${response.status} на сервере!`);
 		}
 	}
@@ -108,7 +108,7 @@ export default class RestProxy<D extends IRestRecord> {
 	 */
 	public async delete(id: number): Promise<void> {
 		const response = await RestProxy.fetch(this.resourceName, id, {method: 'delete'});
-		if (response.status !== 204) {
+		if (!response.ok) {
 			throw new Error(`Ошибка ${response.status} на сервере!`);
 		}
 	}
