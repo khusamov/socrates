@@ -3,10 +3,10 @@ import Proxy from './Proxy';
 import IResource from './IResource';
 import Resource from './Resource';
 
-interface IResourceModelConstructor {
+export interface IResourceConstructor {
 	/**
 	 * Пока не найден другой выход, то здесь приходится дублировать статическое
-	 * свойство ResourceModel.resourceName. Почему так, смотрите по ссылке
+	 * свойство Resource.resourceName. Почему так, смотрите по ссылке
 	 * параграф 'Разница между статической частью и экземпляром класса':
 	 * @link https://goo.gl/wt4D5Y
 	 */
@@ -19,37 +19,37 @@ interface IResourceModelConstructor {
  * Посредник для связи сервером для конкретного ресурса.
  */
 export default class Store<
-	TResourceModelConstructor extends IResourceModelConstructor,
-	TResourceModel extends Resource<IResource>,
+	TResourceConstructor extends IResourceConstructor,
+	TResource extends Resource<IResource>,
 	> {
 
 	public proxy: Proxy<IResource>;
 
-	private readonly ResourceModelClass: TResourceModelConstructor;
+	private readonly ResourceClass: TResourceConstructor;
 
 	/**
 	 * Конструктор посредника.
-	 * @param ResourceModelClass Ссылка на класс ресурса. Требуется для получения имени ресурса
+	 * @param ResourceClass Ссылка на класс ресурса. Требуется для получения имени ресурса
 	 * и для создания экземпляров ресурсов.
 	 */
-	constructor(ResourceModelClass: TResourceModelConstructor) {
-		this.ResourceModelClass = ResourceModelClass;
-		this.proxy = new Proxy<IResource>((ResourceModelClass as typeof Resource).resourceName);
+	constructor(ResourceClass: TResourceConstructor) {
+		this.ResourceClass = ResourceClass;
+		this.proxy = new Proxy<IResource>((ResourceClass as typeof Resource).resourceName);
 	}
 
 	/**
 	 * Получить все записи данного ресурса с сервера.
 	 */
-	public async getAll(): Promise<TResourceModel[]> {
-		return (await this.proxy.getAll()).map(rawData => new this.ResourceModelClass(rawData) as TResourceModel);
+	public async getAll(): Promise<TResource[]> {
+		return (await this.proxy.getAll()).map(rawData => new this.ResourceClass(rawData) as TResource);
 	}
 
 	/**
 	 * Получить одну запись с сервера.
 	 * @param id
 	 */
-	public async getOne(id: number): Promise<TResourceModel> {
-		return new this.ResourceModelClass(await this.proxy.getOne(id)) as TResourceModel;
+	public async getOne(id: number): Promise<TResource> {
+		return new this.ResourceClass(await this.proxy.getOne(id)) as TResource;
 	}
 
 	/**
@@ -65,8 +65,8 @@ export default class Store<
 	 * Клонирование данных производится функцией _.cloneDeep().
 	 * @param resourceModel
 	 */
-	public clone(resourceModel: TResourceModel): TResourceModel {
-		return new this.ResourceModelClass(_.cloneDeep(resourceModel.rawData)) as TResourceModel;
+	public clone(resourceModel: TResource): TResource {
+		return new this.ResourceClass(_.cloneDeep(resourceModel.rawData)) as TResource;
 	}
 
 }
