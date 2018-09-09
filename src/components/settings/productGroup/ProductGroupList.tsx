@@ -1,17 +1,19 @@
-import React, {Component, MouseEvent, RefObject, Fragment, ReactNode} from 'react';
+import React, {Component, MouseEvent, Fragment, ReactNode} from 'react';
 import './ProductGroupList.scss';
 import ProductGroup from './ProductGroup';
-import ProductGroupForm, {TMode as TProductGroupFormMode} from './ProductGroupForm';
+// import {TMode as TProductGroupFormMode} from './ProductGroupForm';
 import Modal from '@library/modal/Modal';
 import Table, {Column} from '@library/table/Table';
 import Button from '@library/button/Button';
 import Panel, {Header, Title, Content, Docked} from '@library/panel/Panel';
+import Form, { TMode as TFormMode} from '@library/form/Form';
+import TextField from '@library/form/field/TextField';
 
 interface IProductGroupState {
 	productGroupList: ProductGroup[];
 	productGroupFormData: ProductGroup;
 	modalVisible: boolean;
-	productGroupFormMode: TProductGroupFormMode;
+	productGroupFormMode: TFormMode;
 }
 
 export default class ProductGroupList extends Component<{}, IProductGroupState> {
@@ -23,11 +25,12 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 		productGroupFormMode: 'insert'
 	};
 
-	private readonly productGroupFormRef: RefObject<ProductGroupForm>;
+	// private readonly productGroupFormRef: RefObject<ProductGroupForm>;
+	// private readonly productGroupFormRef: RefObject<Form<ProductGroup>>;
 
 	constructor(props: {}) {
 		super(props);
-		this.productGroupFormRef = React.createRef();
+		// this.productGroupFormRef = React.createRef();
 	}
 
 	public async componentDidMount() {
@@ -73,28 +76,51 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 	private renderModal(): ReactNode {
 		return (
 			<Modal visible={this.state.modalVisible}>
-				<ProductGroupForm
-					ref={this.productGroupFormRef}
+				{/*<ProductGroupForm*/}
+					{/*ref={this.productGroupFormRef}*/}
+					{/*mode={this.state.productGroupFormMode}*/}
+					{/*productGroup={this.state.productGroupFormData}*/}
+					{/*onSubmit={this.ProductGroupFormSubmit}*/}
+					{/*onCancel={this.ProductGroupFormCancel}*/}
+				{/*/>*/}
+
+				<Form<typeof ProductGroup, ProductGroup>
+					// ref={this.productGroupFormRef}
 					mode={this.state.productGroupFormMode}
-					productGroup={this.state.productGroupFormData}
+					record={this.state.productGroupFormData}
+					recordStore={ProductGroup.store}
 					onSubmit={this.ProductGroupFormSubmit}
 					onCancel={this.ProductGroupFormCancel}
-				/>
+					title={{
+						insert: 'Новая группа товаров/услуг',
+						update: 'Изменить группу товаров/услуг'
+					}}
+				>
+					{({onFieldChange, record}) => (
+						<TextField
+							label='Наименование группы товаров/услуг'
+							name='name'
+							value={record.rawData.name}
+							onChange={onFieldChange}
+						/>
+					)}
+				</Form>
+
 			</Modal>
 		);
 	}
 
-	private ProductGroupFormSubmit = async () => {
-		const productGroupForm: ProductGroupForm | null = this.productGroupFormRef.current;
-		if (productGroupForm) {
-			const productGroup = productGroupForm.state.productGroup;
+	private ProductGroupFormSubmit = async (mode: TFormMode, productGroup: ProductGroup) => {
+		// const productGroupForm: ProductGroupForm | null = this.productGroupFormRef.current;
+		// if (productGroupForm) {
+			// const productGroup = productGroupForm.state.productGroup;
 			if (productGroup) {
 				this.setState({
 					modalVisible: false
 				});
 
 				let newProductGroup: ProductGroup;
-				switch (productGroupForm.props.mode) {
+				switch (mode) {
 					case 'insert':
 						newProductGroup = new ProductGroup({
 							name: productGroup.rawData.name
@@ -105,13 +131,13 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 						newProductGroup.rawData.name = productGroup.rawData.name;
 						break;
 					default:
-						throw new Error(`Неизвестный режим формы ${productGroupForm.props.mode}`);
+						throw new Error(`Неизвестный режим формы ${mode}`);
 				}
 
 				await newProductGroup.save();
 				await this.loadProductGroupList();
 			}
-		}
+		// }
 	};
 
 	private ProductGroupFormCancel = () => {
