@@ -1,9 +1,9 @@
 import React, {ChangeEvent, Component} from 'react';
 import './ProductGroupForm.scss';
-import uuidv1 from 'uuid/v1';
 import ProductGroup from './ProductGroup';
 import Button from '@library/button/Button';
 import Panel, {Content, Title, Footer, Header} from '@library/panel/Panel';
+import TextField from '@library/form/field/TextField';
 
 export type TMode = 'insert' | 'update';
 
@@ -47,7 +47,6 @@ export default class ProductGroupForm extends Component<IProductGroupFormProps, 
 	}
 
 	public render() {
-		const nameFieldId = uuidv1();
 		const {name = ''} = this.state.productGroup ? this.state.productGroup.rawData : {};
 		return (
 			<form className='ProductGroupForm' onSubmit={this.props.onSubmit}>
@@ -56,10 +55,8 @@ export default class ProductGroupForm extends Component<IProductGroupFormProps, 
 						<Title>{formTitle[this.props.mode]}</Title>
 					</Header>
 					<Content style={{padding: 10}}>
-						<label htmlFor={nameFieldId}>Наименование группы товаров/услуг:</label>
-						<input
-							id={nameFieldId}
-							type='text'
+						<TextField
+							label='Наименование группы товаров/услуг'
 							name='name'
 							value={name}
 							onChange={this.onInputChange}
