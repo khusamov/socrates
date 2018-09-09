@@ -1,6 +1,6 @@
 import React, {Component, ReactNode} from 'react';
 import './App.scss';
-import ProductGroupList from '@components/settings/product/ProductGroupList';
+import ProductGroupList from '@components/settings/productGroup/ProductGroupList';
 import Tabs, {Tab} from '@library/tab/Tabs';
 
 export default class App extends Component {
