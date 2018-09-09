@@ -1,22 +1,11 @@
 import React, {Component, MouseEvent, RefObject, Fragment, ReactNode} from 'react';
 import './ProductGroupList.scss';
-import Modal from '../../library/modal/Modal';
+import ProductGroup from './ProductGroup';
 import ProductGroupForm, {TMode as TProductGroupFormMode} from './ProductGroupForm';
-// import IProductGroup from './IProductGroup';
+import Modal from '@library/modal/Modal';
 import Table, {Column} from '@library/table/Table';
 import Button from '@library/button/Button';
-import Panel, {Title, Content, Docked} from '@library/panel/Panel';
-// import Resource from '@library/rest/resource/Resource';
-// import RestProxy from '@library/rest/RestProxy';
-
-import ProductGroup from './ProductGroup';
-// import ProductGroupStore from './ProductGroupStore';
-
-
-
-
-
-
+import Panel, {Header, Title, Content, Docked} from '@library/panel/Panel';
 
 interface IProductGroupState {
 	productGroupList: ProductGroup[];
@@ -49,7 +38,9 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 		return (
 			<div className='ProductGroupList'>
 				<Panel>
-					<Title>Группы товаров/услуг</Title>
+					<Header>
+						<Title>Группы товаров/услуг</Title>
+					</Header>
 					<Docked style={{padding: 10}}>
 						<Button onClick={this.onInsertButtonClick}>Новая запись</Button>
 					</Docked>

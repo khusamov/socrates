@@ -1,0 +1,33 @@
+.TabButton {
+	$background-color: bisque;
+	font-size: 70%;
+	padding: 7px 12px;
+	cursor: pointer;
+	background-color: white;
+	border: none;
+	border: {
+		bottom: 1px solid black;
+		top: 1px solid white;
+		left: 1px solid white;
+		right: 1px solid white;
+	}
+	outline: none;
+	&:hover {
+		background-color: $background-color;
+	}
+	&:active, &.checked {
+		background-color: #fffefd;
+	}
+	&.checked {
+		cursor: default;
+		border: {
+			bottom: 1px solid white;
+			top: 1px solid black;
+			left: 1px solid black;
+			right: 1px solid black;
+		}
+	}
+	&:focus {
+
+	}
+}

@@ -1,12 +1,8 @@
 import camelcase from 'camelcase';
-import RestProxy, {IRestRecord} from '../RestProxy';
-// import RestStore from '@library/rest/RestStore';
+import Proxy from './Proxy';
+import IResource from './IResource';
 
-export default class ResourceModel<T extends IRestRecord> {
-
-	// public static get store(): RestStore<typeof ResourceModel, ResourceModel<IRestRecord>> {
-	// 	return new RestStore<typeof ResourceModel, ResourceModel<IRestRecord>>(this);
-	// }
+export default class Resource<T extends IResource> {
 
 	/**
 	 * Имя ресурса.
@@ -21,7 +17,10 @@ export default class ResourceModel<T extends IRestRecord> {
 	 */
 	public phantom: boolean;
 
-	private readonly proxy: RestProxy<T>;
+	/**
+	 * Посредник для связи с REST-сервером.
+	 */
+	private readonly proxy: Proxy<T>;
 
 	/**
 	 * Конструктор объекта ресурса.
@@ -29,7 +28,7 @@ export default class ResourceModel<T extends IRestRecord> {
 	 */
 	constructor(public rawData: T = {} as T) {
 		this.phantom = !('id' in rawData);
-		this.proxy = new RestProxy<T>((this.constructor as typeof ResourceModel).resourceName);
+		this.proxy = new Proxy<T>((this.constructor as typeof Resource).resourceName);
 	}
 
 	/**

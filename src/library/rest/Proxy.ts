@@ -1,13 +1,15 @@
+import IResource from './IResource';
+
 const {
 	REACT_APP_API_HOST: API_HOST,
 	REACT_APP_API_PORT: API_PORT
 } = process.env;
 
-export interface IRestRecord {
-	id?: number;
-}
-
-export default class RestProxy<D extends IRestRecord> {
+/**
+ * Посредник для связи с сервером.
+ * Абстрагирует работу с фунцией fetch. Также абстрагирует работу с URL ресурсов.
+ */
+export default class Proxy<D extends IResource> {
 
 	/**
 	 * Отправить запрос на сервер.
@@ -52,7 +54,7 @@ export default class RestProxy<D extends IRestRecord> {
 	 * @param id
 	 */
 	public async getOne(id: number): Promise<D> {
-		const response = await RestProxy.fetch(this.resourceName, id, {method: 'get'});
+		const response = await Proxy.fetch(this.resourceName, id, {method: 'get'});
 		return await response.json();
 	}
 
@@ -60,7 +62,7 @@ export default class RestProxy<D extends IRestRecord> {
 	 * Получить все записи.
 	 */
 	public async getAll(): Promise<D[]> {
-		const response = await RestProxy.fetch(this.resourceName, {method: 'get'});
+		const response = await Proxy.fetch(this.resourceName, {method: 'get'});
 		return response.status === 204 ? [] : await response.json();
 	}
 
@@ -70,7 +72,7 @@ export default class RestProxy<D extends IRestRecord> {
 	 * @returns id
 	 */
 	public async post(data: D): Promise<number> {
-		const response = await RestProxy.fetch(this.resourceName, {
+		const response = await Proxy.fetch(this.resourceName, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json; charset=utf-8'
@@ -90,7 +92,7 @@ export default class RestProxy<D extends IRestRecord> {
 	 * @param data
 	 */
 	public async put(id: number, data: D): Promise<void> {
-		const response = await RestProxy.fetch(this.resourceName, id, {
+		const response = await Proxy.fetch(this.resourceName, id, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json; charset=utf-8'
@@ -107,7 +109,7 @@ export default class RestProxy<D extends IRestRecord> {
 	 * @param id
 	 */
 	public async delete(id: number): Promise<void> {
-		const response = await RestProxy.fetch(this.resourceName, id, {method: 'delete'});
+		const response = await Proxy.fetch(this.resourceName, id, {method: 'delete'});
 		if (!response.ok) {
 			throw new Error(`Ошибка ${response.status} на сервере!`);
 		}

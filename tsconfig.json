@@ -22,6 +22,8 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "paths": {
+      "@components": ["src/components"],
+      "@components/*": ["src/components/*"],
       "@library": ["src/library"],
       "@library/*": ["src/library/*"]
     }

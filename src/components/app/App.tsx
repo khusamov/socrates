@@ -1,12 +1,17 @@
-import React from 'react';
+import React, {Component, ReactNode} from 'react';
 import './App.scss';
-import ProductGroupList from '../product/ProductGroupList';
+import ProductGroupList from '@components/settings/product/ProductGroupList';
+import Tabs, {Tab} from '@library/tab/Tabs';
 
-export default class App extends React.Component {
-	public render() {
+export default class App extends Component {
+	public render(): ReactNode {
 		return (
 			<div className="App">
-				<ProductGroupList/>
+				<Tabs bodyStyle={{padding: 10}}>
+					<Tab title='Группы товаров/услуг'><ProductGroupList/></Tab>
+					<Tab title='Группы товаров/услуг'><ProductGroupList/></Tab>
+					<Tab title='Группы товаров/услуг'><ProductGroupList/></Tab>
+				</Tabs>
 			</div>
 		);
 	}
