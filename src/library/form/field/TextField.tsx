@@ -5,7 +5,11 @@ interface ITextFieldProps {
 	label: string;
 	value: string;
 	name: string;
+
+	// TODO Сделать передачу в обработчик onChange не события, а измененное значение.
+	// В компоненте Form, соответственно, изменить метод onFieldChange.
 	onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+
 }
 
 export default class TextField extends Component<ITextFieldProps> {

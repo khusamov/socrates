@@ -1,8 +1,8 @@
 import React, {Component, ChangeEvent, ReactNode} from 'react';
-import Button from '@library/button/Button';
 import Panel, {Content, Title, Footer, Header} from '@library/panel/Panel';
 import {Store, IResource, Resource} from '@library/rest';
 import {IResourceConstructor} from '@library/rest/Store';
+import Button from '@library/button/Button';
 
 /**
  * Контекст формы передает ссылку на метод onFieldChange для передачи измененных
@@ -12,13 +12,6 @@ export interface IFormContext<TResource extends Resource<IResource>> {
 	onFieldChange: (event: ChangeEvent<HTMLInputElement>) => void;
 	record: TResource;
 }
-
-// export const {Provider, Consumer} = React.createContext<IFormContext<Resource<IResource>>>({
-// 	onFieldChange: () => undefined,
-// 	record: new Resource
-// });
-
-
 
 export interface ITitle {
 	insert: string;
@@ -76,20 +69,12 @@ export default class Form<TResourceConstructor extends IResourceConstructor, TRe
 						<Title>{this.props.title[this.props.mode]}</Title>
 					</Header>
 					<Content style={{padding: 10}}>
-
 						{
 							this.props.children({
 								onFieldChange: this.onFieldChange,
 								record: this.state.record
 							})
 						}
-
-
-						{/*<Provider value={{onFieldChange: this.onFieldChange, record: this.state.record}}>*/}
-							{/*{this.props.children}*/}
-						{/*</Provider>*/}
-
-
 					</Content>
 					<Footer style={{padding: 10}}>
 						<Button type='submit'>{submitButtonCaption[this.props.mode]}</Button>

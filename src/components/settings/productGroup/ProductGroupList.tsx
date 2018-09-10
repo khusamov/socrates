@@ -1,13 +1,10 @@
-import React, {Component, MouseEvent, Fragment, ReactNode} from 'react';
-import './ProductGroupList.scss';
+import React, {Component, ReactNode} from 'react';
 import ProductGroup from './ProductGroup';
-// import {TMode as TProductGroupFormMode} from './ProductGroupForm';
-import Modal from '@library/modal/Modal';
-import Table, {Column} from '@library/table/Table';
+import ProductGroupTable from './ProductGroupTable';
+import ProductGroupModal from './ProductGroupModal';
 import Button from '@library/button/Button';
 import Panel, {Header, Title, Content, Docked} from '@library/panel/Panel';
-import Form, { TMode as TFormMode} from '@library/form/Form';
-import TextField from '@library/form/field/TextField';
+import {TMode as TFormMode} from '@library/form/Form';
 
 interface IProductGroupState {
 	productGroupList: ProductGroup[];
@@ -25,14 +22,6 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 		productGroupFormMode: 'insert'
 	};
 
-	// private readonly productGroupFormRef: RefObject<ProductGroupForm>;
-	// private readonly productGroupFormRef: RefObject<Form<ProductGroup>>;
-
-	constructor(props: {}) {
-		super(props);
-		// this.productGroupFormRef = React.createRef();
-	}
-
 	public async componentDidMount() {
 		await this.loadProductGroupList();
 	}
@@ -48,99 +37,50 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 						<Button onClick={this.onInsertButtonClick}>Новая запись</Button>
 					</Docked>
 					<Content>
-						{this.renderTable()}
+						<ProductGroupTable
+							data={this.state.productGroupList}
+							onAction={this.onAction}
+						/>
 					</Content>
 				</Panel>
-				{this.renderModal()}
+				<ProductGroupModal
+					visible={this.state.modalVisible}
+					mode={this.state.productGroupFormMode}
+					record={this.state.productGroupFormData}
+					onSubmit={this.onProductGroupFormSubmit}
+					onCancel={this.onProductGroupFormCancel}
+				/>
 			</div>
 		);
 	}
 
-	private renderTable(): ReactNode {
-		return (
-			<Table data={this.state.productGroupList}>
-				<Column title='Наименование группы товаров/услуг' dataIndex='rawData.name'/>
-				<Column>
-					{(productGroup: ProductGroup) => (
-						<Fragment>
-							<a href='#' data-id={productGroup.rawData.id} onClick={this.onUpdateButtonClick}>Изменить</a>
-							<span>&nbsp;</span>
-							<a href='#' data-id={productGroup.rawData.id} onClick={this.onDeleteButtonClick}>Удалить</a>
-						</Fragment>
-					)}
-				</Column>
-			</Table>
-		);
-	}
+	private onProductGroupFormSubmit = async (mode: TFormMode, productGroup: ProductGroup) => {
+		if (productGroup) {
+			this.setState({
+				modalVisible: false
+			});
 
-	private renderModal(): ReactNode {
-		return (
-			<Modal visible={this.state.modalVisible}>
-				{/*<ProductGroupForm*/}
-					{/*ref={this.productGroupFormRef}*/}
-					{/*mode={this.state.productGroupFormMode}*/}
-					{/*productGroup={this.state.productGroupFormData}*/}
-					{/*onSubmit={this.ProductGroupFormSubmit}*/}
-					{/*onCancel={this.ProductGroupFormCancel}*/}
-				{/*/>*/}
-
-				<Form<typeof ProductGroup, ProductGroup>
-					// ref={this.productGroupFormRef}
-					mode={this.state.productGroupFormMode}
-					record={this.state.productGroupFormData}
-					recordStore={ProductGroup.store}
-					onSubmit={this.ProductGroupFormSubmit}
-					onCancel={this.ProductGroupFormCancel}
-					title={{
-						insert: 'Новая группа товаров/услуг',
-						update: 'Изменить группу товаров/услуг'
-					}}
-				>
-					{({onFieldChange, record}) => (
-						<TextField
-							label='Наименование группы товаров/услуг'
-							name='name'
-							value={record.rawData.name}
-							onChange={onFieldChange}
-						/>
-					)}
-				</Form>
-
-			</Modal>
-		);
-	}
-
-	private ProductGroupFormSubmit = async (mode: TFormMode, productGroup: ProductGroup) => {
-		// const productGroupForm: ProductGroupForm | null = this.productGroupFormRef.current;
-		// if (productGroupForm) {
-			// const productGroup = productGroupForm.state.productGroup;
-			if (productGroup) {
-				this.setState({
-					modalVisible: false
-				});
-
-				let newProductGroup: ProductGroup;
-				switch (mode) {
-					case 'insert':
-						newProductGroup = new ProductGroup({
-							name: productGroup.rawData.name
-						});
-						break;
-					case 'update':
-						newProductGroup = await ProductGroup.store.getOne(this.state.productGroupFormData.rawData.id as number);
-						newProductGroup.rawData.name = productGroup.rawData.name;
-						break;
-					default:
-						throw new Error(`Неизвестный режим формы ${mode}`);
-				}
-
-				await newProductGroup.save();
-				await this.loadProductGroupList();
+			let newProductGroup: ProductGroup;
+			switch (mode) {
+				case 'insert':
+					newProductGroup = new ProductGroup({
+						name: productGroup.rawData.name
+					});
+					break;
+				case 'update':
+					newProductGroup = await ProductGroup.store.getOne(this.state.productGroupFormData.rawData.id as number);
+					newProductGroup.rawData.name = productGroup.rawData.name;
+					break;
+				default:
+					throw new Error(`Неизвестный режим формы ${mode}`);
 			}
-		// }
+
+			await newProductGroup.save();
+			await this.loadProductGroupList();
+		}
 	};
 
-	private ProductGroupFormCancel = () => {
+	private onProductGroupFormCancel = () => {
 		this.setState({
 			modalVisible: false
 		});
@@ -160,22 +100,22 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 		});
 	};
 
-	private onUpdateButtonClick = async (event: MouseEvent<HTMLAnchorElement>) => {
-		const id: number = Number((event.target as HTMLAnchorElement).getAttribute('data-id'));
-		const productGroup = await ProductGroup.store.getOne(id);
-		this.setState({
-			modalVisible: true,
-			productGroupFormMode: 'update',
-			productGroupFormData: productGroup
-		});
-	};
-
-	private onDeleteButtonClick = async (event: MouseEvent<HTMLAnchorElement>) => {
-		const id = (event.target as HTMLAnchorElement).getAttribute('data-id');
-		if (id) {
-			await ProductGroup.store.delete(Number(id));
+	private onAction = async (action: string, id: number) => {
+		switch (action) {
+			case 'update':
+				const productGroup = await ProductGroup.store.getOne(id);
+				this.setState({
+					modalVisible: true,
+					productGroupFormMode: 'update',
+					productGroupFormData: productGroup
+				});
+				break;
+			case 'delete':
+				await ProductGroup.store.delete(Number(id));
+				await this.loadProductGroupList();
+				break;
+			default: throw new Error(`Не известное действие '${action}'.`);
 		}
-		await this.loadProductGroupList();
 	};
 
 }
