@@ -3,7 +3,7 @@ import Koa from 'koa';
 import Cors from '@koa/cors';
 import Sqlite from 'sqlite';
 import IExtContext from './IExtContext';
-import {productGroupRouter} from './productGroupRouter';
+import {router as productGroupRouter} from './productGroupRouter';
 
 const PORT = 8081;
 const databaseFilePath = Path.join(__dirname, '../../db/mscc.db');

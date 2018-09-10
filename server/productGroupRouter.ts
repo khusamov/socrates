@@ -1,10 +1,12 @@
 import Router, {IRouterContext} from 'koa-router';
 import KoaBody from 'koa-body';
 import IExtRouterContext from './IExtRouterContext';
+import HttpStatus from 'http-status';
 
-export const productGroupRouter = new Router;
+export const router = new Router;
+const resourceName = 'productGroup';
 
-productGroupRouter.get('/productGroup/:id?', async (ctx: IExtRouterContext) => {
+router.get(`/${resourceName}/:id?`, async (ctx: IExtRouterContext) => {
 	const db = ctx.db;
 	if (ctx.params.id) {
 		const record = await db.get(`select * from productGroup where id = ?`, ctx.params.id);
@@ -12,7 +14,7 @@ productGroupRouter.get('/productGroup/:id?', async (ctx: IExtRouterContext) => {
 			ctx.body = record;
 		} else {
 			ctx.body = {};
-			ctx.status = 204; // 204 No Content https://goo.gl/JduZSV
+			ctx.status = HttpStatus.NO_CONTENT;
 		}
 	} else {
 		const data = await db.all(`select * from productGroup`);
@@ -20,27 +22,27 @@ productGroupRouter.get('/productGroup/:id?', async (ctx: IExtRouterContext) => {
 			ctx.body = data;
 		} else {
 			ctx.body = [];
-			ctx.status = 204; // 204 No Content https://goo.gl/JduZSV
+			ctx.status = HttpStatus.NO_CONTENT;
 		}
 	}
 });
 
-productGroupRouter.post('/productGroup', KoaBody(), async (ctx: IExtRouterContext) => {
+router.post(`/${resourceName}`, KoaBody(), async (ctx: IExtRouterContext) => {
 	const db = ctx.db;
 	await db.exec(`insert into productGroup (name) values ('${ctx.request.body.name}')`);
 	const id = (await db.get('select last_insert_rowid() as id')).id;
-	ctx.status = 201; // 201 Created https://goo.gl/JduZSV
+	ctx.status = HttpStatus.CREATED;
 	ctx.body = await db.get(`select * from productGroup where id = ${id}`);
 });
 
-productGroupRouter.put('/productGroup/:id', KoaBody(), async (ctx: IExtRouterContext) => {
+router.put(`/${resourceName}/:id`, KoaBody(), async (ctx: IExtRouterContext) => {
 	const db = ctx.db;
 	await db.exec(`update productGroup set name = '${ctx.request.body.name}' where id = ${ctx.params.id}`);
-	ctx.status = 200;
+	ctx.status = HttpStatus.OK;
 });
 
-productGroupRouter.delete('/productGroup/:id', async (ctx: IExtRouterContext) => {
+router.delete(`/${resourceName}/:id`, async (ctx: IExtRouterContext) => {
 	const db = ctx.db;
 	await db.exec(`delete from productGroup where id = ${ctx.params.id}`);
-	ctx.status = 200;
+	ctx.status = HttpStatus.OK;
 });
