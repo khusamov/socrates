@@ -14,4 +14,9 @@
 	&:focus {
 		border-color: red;
 	}
+	&[disabled] {
+		background-color: white;
+		border-color: silver;
+		cursor: default;
+	}
 }
