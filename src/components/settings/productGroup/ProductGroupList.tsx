@@ -7,19 +7,19 @@ import Panel, {Header, Title, Content, Docked} from '@library/panel/Panel';
 import {TMode as TFormMode} from '@library/form/Form';
 
 interface IProductGroupState {
-	productGroupList: ProductGroup[];
-	productGroupFormData: ProductGroup;
+	data: ProductGroup[];
+	record: ProductGroup;
 	modalVisible: boolean;
-	productGroupFormMode: TFormMode;
+	formMode: TFormMode;
 }
 
 export default class ProductGroupList extends Component<{}, IProductGroupState> {
 
 	public state: IProductGroupState = {
-		productGroupList: [],
+		data: [],
 		modalVisible: false,
-		productGroupFormData: new ProductGroup({name: ''}),
-		productGroupFormMode: 'insert'
+		record: new ProductGroup({name: ''}),
+		formMode: 'insert'
 	};
 
 	public async componentDidMount() {
@@ -38,15 +38,15 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 					</Docked>
 					<Content>
 						<ProductGroupTable
-							data={this.state.productGroupList}
+							data={this.state.data}
 							onAction={this.onAction}
 						/>
 					</Content>
 				</Panel>
 				<ProductGroupModal
 					visible={this.state.modalVisible}
-					mode={this.state.productGroupFormMode}
-					record={this.state.productGroupFormData}
+					mode={this.state.formMode}
+					record={this.state.record}
 					onSubmit={this.onProductGroupFormSubmit}
 					onCancel={this.onProductGroupFormCancel}
 				/>
@@ -68,7 +68,7 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 					});
 					break;
 				case 'update':
-					newProductGroup = await ProductGroup.store.getOne(this.state.productGroupFormData.rawData.id as number);
+					newProductGroup = await ProductGroup.store.getOne(this.state.record.rawData.id as number);
 					newProductGroup.rawData.name = productGroup.rawData.name;
 					break;
 				default:
@@ -88,15 +88,15 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 
 	private async loadProductGroupList() {
 		this.setState({
-			productGroupList: await ProductGroup.store.getAll()
+			data: await ProductGroup.store.getAll()
 		});
 	}
 
 	private onInsertButtonClick = () => {
 		this.setState({
 			modalVisible: true,
-			productGroupFormMode: 'insert',
-			productGroupFormData: new ProductGroup({name: ''})
+			formMode: 'insert',
+			record: new ProductGroup({name: ''})
 		});
 	};
 
@@ -106,8 +106,8 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 				const productGroup = await ProductGroup.store.getOne(id);
 				this.setState({
 					modalVisible: true,
-					productGroupFormMode: 'update',
-					productGroupFormData: productGroup
+					formMode: 'update',
+					record: productGroup
 				});
 				break;
 			case 'delete':
