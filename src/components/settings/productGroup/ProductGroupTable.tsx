@@ -1,7 +1,6 @@
 import React, {Component, ReactNode} from 'react';
 import ProductGroup from '@components/settings/productGroup/ProductGroup';
 import {Column} from '@library/table/Table';
-
 import CrudTable from '@library/crud/crud1/CrudTable';
 
 interface IProductGroupTableProps {

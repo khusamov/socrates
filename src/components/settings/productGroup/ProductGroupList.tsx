@@ -54,6 +54,12 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 		);
 	}
 
+	private async loadProductGroupList() {
+		this.setState({
+			data: await ProductGroup.store.getAll()
+		});
+	}
+
 	private onProductGroupFormSubmit = async (mode: TFormMode, productGroup: ProductGroup) => {
 		if (productGroup) {
 			this.setState({
@@ -85,12 +91,6 @@ export default class ProductGroupList extends Component<{}, IProductGroupState> 
 			modalVisible: false
 		});
 	};
-
-	private async loadProductGroupList() {
-		this.setState({
-			data: await ProductGroup.store.getAll()
-		});
-	}
 
 	private onInsertButtonClick = () => {
 		this.setState({
