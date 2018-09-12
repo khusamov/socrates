@@ -11,7 +11,6 @@ interface ICrudProps<
 	TResource extends Resource<IResource>
 > {
 	title: string;
-	record: TResource;
 	recordStore: Store<TResourceConstructor, TResource>;
 	RecordConstructor: IResourceConstructor;
 	RecordModal: typeof Component;
