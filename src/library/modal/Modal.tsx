@@ -2,7 +2,13 @@ import React, {Component, CSSProperties, Fragment, KeyboardEvent, MouseEvent, Re
 import './Modal.scss';
 
 interface IModalProps {
+	/**
+	 * Видимость окна. Если равен false, то окно не будет отрисовано в DOM-дереве.
+	 */
 	visible: boolean;
+	/**
+	 * Стили для тега, в который будет размещаться содержимое модальной области.
+	 */
 	windowStyle?: CSSProperties;
 }
 
@@ -10,6 +16,10 @@ interface IModalState {
 	visible: boolean;
 }
 
+/**
+ * Модальное окно. Точнее область, потому что кроме прямоугольной области
+ * данный компонент ничего дополнительно не определяет.
+ */
 export default class Modal extends Component<IModalProps, IModalState> {
 
 	public static defaultProps: IModalProps = {
