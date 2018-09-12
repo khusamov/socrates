@@ -13,6 +13,14 @@ export interface IFormContext<TResource extends Resource<IResource>> {
 	record: TResource;
 }
 
+export type TChildrenFunction<TResource extends Resource<IResource>> = (
+	(formContext: IFormContext<TResource>) => ReactNode
+);
+
+export type TSubmitFunction<TResource extends Resource<IResource>> = (
+	(mode: TMode, record?: TResource) => void
+);
+
 export interface ITitle {
 	insert: string;
 	update: string;
@@ -26,11 +34,11 @@ interface IProductGroupFormProps<
 > {
 	recordStore: Store<TResourceConstructor, TResource>;
 	record?: TResource;
-	onSubmit?: (mode: TMode, record?: TResource) => void;
+	onSubmit?: TSubmitFunction<TResource>;
 	onCancel?: () => void;
 	mode: TMode;
 	title: ITitle;
-	children: (formContext: IFormContext<TResource>) => ReactNode;
+	children: TChildrenFunction<TResource>;
 }
 
 const submitButtonCaption = {
@@ -42,6 +50,9 @@ interface IProductGroupFormState<TResource extends Resource<IResource>> {
 	record: TResource;
 }
 
+/**
+ * Форма с панелью в качестве содержимого.
+ */
 export default class Form<TResourceConstructor extends IResourceConstructor, TResource extends Resource<IResource>>
 	extends Component<IProductGroupFormProps<TResourceConstructor, TResource>, IProductGroupFormState<TResource>> {
 
@@ -70,7 +81,7 @@ export default class Form<TResourceConstructor extends IResourceConstructor, TRe
 					</Header>
 					<Content style={{padding: 10}}>
 						{
-							this.props.children({
+							(this.props.children as TChildrenFunction<TResource>)({
 								onFieldChange: this.onFieldChange,
 								record: this.state.record
 							})
