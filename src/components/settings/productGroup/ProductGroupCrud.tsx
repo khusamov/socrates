@@ -4,7 +4,7 @@ import ProductGroupTable from './ProductGroupTable';
 import ProductGroupModal from './ProductGroupModal';
 import Crud from '@library/crud/crud1/Crud';
 
-export default class ProductGroupList extends Component {
+export default class ProductGroupCrud extends Component {
 	public render(): ReactNode {
 		return (
 			<Crud<typeof ProductGroup, ProductGroup>
