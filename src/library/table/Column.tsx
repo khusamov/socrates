@@ -17,7 +17,7 @@ interface IColumnProps {
 	dataIndex?: string;
 }
 
-export type TRendererFunction<D = any> = (record: any, data: D[]) => ReactNode;
+export type TRendererFunction<D = any> = (record: D, data: D[]) => ReactNode;
 
 /**
  * Колонка таблицы.
