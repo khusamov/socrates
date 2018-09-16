@@ -121,7 +121,7 @@ export default class Crud<
 		this.setState({
 			modalVisible: true,
 			formMode: 'insert',
-			record: new this.props.RecordConstructor({name: ''})
+			record: new this.props.RecordConstructor
 		});
 	};
 
