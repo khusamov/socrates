@@ -48,12 +48,6 @@ export default class Table<D> extends Component<ITableProps<D>> {
 	private getColumns() {
 		return Children.map(this.props.children, child => {
 			if (isReactElement(child)) {
-
-				// console.log(child.type.toString()) // Symbol(react.fragment)
-				// if (child.type.toString() !== 'Symbol(react.fragment)') {
-				// 	throw new Error('Fragment');
-				// }
-
 				if (child.type !== Column) {
 					throw new Error('В компоненте <Table> разрешено размещать только <Column>');
 				}
