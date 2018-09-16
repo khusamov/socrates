@@ -1,4 +1,4 @@
-import React, {Component, ReactNode, Fragment, ChangeEvent} from 'react';
+import React, {Component, ReactNode, ChangeEvent} from 'react';
 import uuidv1 from 'uuid/v1';
 
 interface ITextFieldProps {
@@ -17,7 +17,7 @@ export default class TextField extends Component<ITextFieldProps> {
 	public render(): ReactNode {
 		const fieldId = uuidv1();
 		return (
-			<Fragment>
+			<div>
 				<label htmlFor={fieldId}>{this.props.label}:</label>
 				<input
 					id={fieldId}
@@ -26,7 +26,7 @@ export default class TextField extends Component<ITextFieldProps> {
 					value={this.props.value}
 					onChange={this.props.onChange}
 				/>
-			</Fragment>
+			</div>
 		);
 	}
 
