@@ -29,7 +29,10 @@ router.get(`/${resourceName}/:id?`, async (ctx: IExtRouterContext) => {
 
 router.post(`/${resourceName}`, KoaBody(), async (ctx: IExtRouterContext) => {
 	const db = ctx.db;
-	await db.exec(`insert into jobCategory (name) values ('${ctx.request.body.name}')`);
+	await db.exec(`
+		insert into jobCategory (name, hourNormCost) 
+		values ('${ctx.request.body.name}', ${ctx.request.body.hourNormCost})
+	`);
 	const id = (await db.get('select last_insert_rowid() as id')).id;
 	ctx.status = HttpStatus.CREATED;
 	ctx.body = await db.get(`select * from jobCategory where id = ${id}`);
@@ -37,7 +40,10 @@ router.post(`/${resourceName}`, KoaBody(), async (ctx: IExtRouterContext) => {
 
 router.put(`/${resourceName}/:id`, KoaBody(), async (ctx: IExtRouterContext) => {
 	const db = ctx.db;
-	await db.exec(`update jobCategory set name = '${ctx.request.body.name}' where id = ${ctx.params.id}`);
+	await db.exec(`
+		update jobCategory set name = '${ctx.request.body.name}', hourNormCost = ${ctx.request.body.hourNormCost}  
+		where id = ${ctx.params.id}
+	`);
 	ctx.status = HttpStatus.OK;
 });
 
