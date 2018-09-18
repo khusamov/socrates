@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "npm-run-all --print-label --parallel server:tsc:w server:nodemon client:start",
+    "start": "tsc -p server && npm-run-all --print-label --parallel server:tsc:w server:nodemon client:start",
     "client:start": "react-app-rewired start --scripts-version react-scripts-ts",
     "client:build": "react-app-rewired build --scripts-version react-scripts-ts",
     "client:test": "react-app-rewired test --scripts-version react-scripts-ts --env=jsdom",
