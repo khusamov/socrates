@@ -3,10 +3,9 @@ import KoaBody from 'koa-body';
 import IExtRouterContext from './IExtRouterContext';
 import HttpStatus from 'http-status';
 
-export const router = new Router;
-const resourceName = 'jobCategory';
+export const router = new Router({prefix: '/jobCategory'});
 
-router.get(`/${resourceName}/:id?`, async (ctx: IExtRouterContext) => {
+router.get(`/:id?`, async (ctx: IExtRouterContext) => {
 	const db = ctx.db;
 	if (ctx.params.id) {
 		const record = await db.get(`select * from jobCategory where id = ?`, ctx.params.id);
@@ -27,7 +26,7 @@ router.get(`/${resourceName}/:id?`, async (ctx: IExtRouterContext) => {
 	}
 });
 
-router.post(`/${resourceName}`, KoaBody(), async (ctx: IExtRouterContext) => {
+router.post(`/`, KoaBody(), async (ctx: IExtRouterContext) => {
 	const db = ctx.db;
 	await db.exec(`
 		insert into jobCategory (name, hourNormCost) 
@@ -38,7 +37,7 @@ router.post(`/${resourceName}`, KoaBody(), async (ctx: IExtRouterContext) => {
 	ctx.body = await db.get(`select * from jobCategory where id = ${id}`);
 });
 
-router.put(`/${resourceName}/:id`, KoaBody(), async (ctx: IExtRouterContext) => {
+router.put(`/:id`, KoaBody(), async (ctx: IExtRouterContext) => {
 	const db = ctx.db;
 	await db.exec(`
 		update jobCategory set name = '${ctx.request.body.name}', hourNormCost = ${ctx.request.body.hourNormCost}  
@@ -47,7 +46,7 @@ router.put(`/${resourceName}/:id`, KoaBody(), async (ctx: IExtRouterContext) => 
 	ctx.status = HttpStatus.OK;
 });
 
-router.delete(`/${resourceName}/:id`, async (ctx: IExtRouterContext) => {
+router.delete(`/:id`, async (ctx: IExtRouterContext) => {
 	const db = ctx.db;
 	await db.exec(`delete from jobCategory where id = ${ctx.params.id}`);
 	ctx.status = HttpStatus.OK;

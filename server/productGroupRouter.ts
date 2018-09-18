@@ -3,10 +3,9 @@ import KoaBody from 'koa-body';
 import IExtRouterContext from './IExtRouterContext';
 import HttpStatus from 'http-status';
 
-export const router = new Router;
-const resourceName = 'productGroup';
+export const router = new Router({prefix: '/productGroup'});
 
-router.get(`/${resourceName}/:id?`, async (ctx: IExtRouterContext) => {
+router.get(`/:id?`, async (ctx: IExtRouterContext) => {
 	const db = ctx.db;
 	if (ctx.params.id) {
 		const record = await db.get(`select * from productGroup where id = ?`, ctx.params.id);
@@ -27,7 +26,7 @@ router.get(`/${resourceName}/:id?`, async (ctx: IExtRouterContext) => {
 	}
 });
 
-router.post(`/${resourceName}`, KoaBody(), async (ctx: IExtRouterContext) => {
+router.post(`/`, KoaBody(), async (ctx: IExtRouterContext) => {
 	const db = ctx.db;
 	await db.exec(`insert into productGroup (name) values ('${ctx.request.body.name}')`);
 	const id = (await db.get('select last_insert_rowid() as id')).id;
@@ -35,13 +34,13 @@ router.post(`/${resourceName}`, KoaBody(), async (ctx: IExtRouterContext) => {
 	ctx.body = await db.get(`select * from productGroup where id = ${id}`);
 });
 
-router.put(`/${resourceName}/:id`, KoaBody(), async (ctx: IExtRouterContext) => {
+router.put(`/:id`, KoaBody(), async (ctx: IExtRouterContext) => {
 	const db = ctx.db;
 	await db.exec(`update productGroup set name = '${ctx.request.body.name}' where id = ${ctx.params.id}`);
 	ctx.status = HttpStatus.OK;
 });
 
-router.delete(`/${resourceName}/:id`, async (ctx: IExtRouterContext) => {
+router.delete(`/:id`, async (ctx: IExtRouterContext) => {
 	const db = ctx.db;
 	await db.exec(`delete from productGroup where id = ${ctx.params.id}`);
 	ctx.status = HttpStatus.OK;
